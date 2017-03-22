@@ -39,7 +39,7 @@ class
 * Borrow book
 * Return book
 
-## Manager : public Staff
+## Manager : public Assistant
 class
 ### Functions  
 * Add book  
@@ -50,13 +50,7 @@ class
 * Remove users
 * edit users
 
-## Misc info
-* Some books are short term (1-week loan)
-* Others are long term (4-week)
-* New books and copies arrive regularly and old books are sometimes disposed of 
-* Authenticate mananger and assistant
-
-### Library
+## Library
 class
 ### Data
 * Book database : vector\<Book\>
@@ -74,3 +68,9 @@ class
   * Authenticate?
 * Authenticate
   * __TARGET_CLASS__ == dyanmic_cast\<Staff\>(__STAFF_DERIVED_CLASS__)
+  
+  ## Misc info
+* Some books are short term (1-week loan)
+* Others are long term (4-week)
+* New books and copies arrive regularly and old books are sometimes disposed of 
+* Authenticate mananger and assistant
