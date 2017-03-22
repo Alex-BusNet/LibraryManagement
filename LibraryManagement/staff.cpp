@@ -1,7 +1,7 @@
 #include "staff.h"
 
-Staff::Staff(QString name, int cardNumber, QString addr, int phoneNumber) :
-    User(name, cardNumber, addr, phoneNumber)
+Staff::Staff(QString name, int cardNumber, QString addr, int phoneNumber, QString username) :
+    UserBase(name, cardNumber, addr, phoneNumber, username)
 {
 
 }
@@ -32,6 +32,20 @@ void Staff::ReturnBook(Book b)
             }
 
             checkedOut[j] = NULL;
+            break;
+        }
+    }
+}
+
+void Staff::CheckOutBook(Book b)
+{
+    for(int i = 0; i < 12; i++)
+    {
+        //Find the first open slot in the array
+        if(checkedOut[i] == 0)
+        {
+            //Add the book;
+            checkedOut[i] = b;
             break;
         }
     }

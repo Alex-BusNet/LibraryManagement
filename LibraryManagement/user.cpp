@@ -1,37 +1,13 @@
 #include "user.h"
 
 
-User::User(QString name, int cardNumber, QString addr, int phoneNumber)
+User::User(QString name, int cardNumber, QString addr, int phoneNumber, QString username) :
+    UserBase(name, cardNumber, addr, phoneNumber, username)
 {
-    this->name = name;
-    this->cardNumber = cardNumber;
-    this->address = addr;
-    this->phoneNumber = phoneNumber;
-
     for(int i = 0; i < 6; i++)
     {
         checkedOut[i] = 0;
     }
-}
-
-void User::SetName(QString n)
-{
-    this->name = n;
-}
-
-void User::SetAddress(QString a)
-{
-    this->address = a;
-}
-
-void User::SetPhoneNumber(int pn)
-{
-    this->phoneNumber = pn;
-}
-
-void User::SetCardNumber(int cn)
-{
-    this->cardNumber = cn;
 }
 
 /*

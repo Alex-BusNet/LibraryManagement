@@ -3,16 +3,14 @@
 
 #include <QString>
 #include "datatypes.h"
+#include "userbase.h"
 
-class User
+class User : public UserBase
 {
 public:
-    User(QString name, int cardNumber, QString addr, int phoneNumber);
+    User(QString name, int cardNumber, QString addr, int phoneNumber, QString username);
 
-    void SetName(QString n);
-    void SetAddress(QString a);
-    void SetPhoneNumber(int pn);
-    void SetCardNumber(int cn);
+
 
     bool CanCheckOutBook();
     void CheckOutBook(Book b);
@@ -21,13 +19,10 @@ public:
 
     void GetCheckedOutBooks(const Book arr[]);
 
-private:
-    QString name;
-    int cardNumber;
-    QString address;
-    int phoneNumber;
-    Book checkedOut[6];
 
+
+private:
+    Book checkedOut[6];
 };
 
 #endif // USER_H
