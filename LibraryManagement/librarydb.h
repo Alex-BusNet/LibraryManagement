@@ -18,12 +18,13 @@ public:
 
     bool AddUser(UserBase *u, QString pass);
     void RemoveUser(UserBase *u);
-
+    QVector<UserBase*> GetAllUsers();
+    
     bool AddStaff(Staff* s);
     void RemoveStaff(Staff* s);
 
     bool LogIn(const QString username, const QString pass);
-    bool Authenticate(UserBase *s);
+    int Authenticate(UserBase *s);
 
     void AddBook(Book b);
     void RemoveBook(Book b);
@@ -32,6 +33,8 @@ public:
     QVector<Book> GetBooks(const QString title = " ", const QString author = " ");
     Book GetBook(const int ISBN);
     Book GetBook(const QString title, const QString author) const;
+    
+    QVector<Book> GetAllBooks();
 
     int GetCopiesOfBook(const int ISBN);
     int GetCopiesOfBook(const QString title, const QString author);
