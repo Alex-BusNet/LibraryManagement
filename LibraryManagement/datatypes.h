@@ -37,10 +37,9 @@ struct Book
         return (ISBN == i);
     }
 
-    Book operator =(const int& i)
+    void operator =(const int& i)
     {
-        Book b{author, title, i, copies, longTerm};
-        return b;
+        this->ISBN = i;
     }
 
     bool operator !=(const int& i)
