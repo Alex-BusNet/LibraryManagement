@@ -9,7 +9,7 @@ struct Book
     QString title;
     QString author;
     int ISBN;
-    int copies;
+    QVector<int> copiesAvailable;
     bool longTerm;
 
     bool operator ==(const Book& other) const
