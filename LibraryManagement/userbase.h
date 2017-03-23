@@ -16,9 +16,11 @@ public:
     void SetCardNumber(int cn);
     void SetUsername(QString un);
 
-    QString GetUsername() const;
+    virtual QString GetUsername() const;
 
     bool operator==(const UserBase &other) { return (other.cardNumber == cardNumber); }
+
+
 
 private:
     QString name;

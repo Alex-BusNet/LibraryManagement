@@ -13,7 +13,7 @@ public:
     void CheckOutBook(Book b);
 
     template<typename T>
-    static bool instanceof(T *ptr) { return (static_cast<const Staff*>(ptr) != nullptr); }
+    static bool instanceof(const T *ptr) { return (dynamic_cast<const Staff*>(ptr) != nullptr); }
 
 private:
     Book checkedOut[12];

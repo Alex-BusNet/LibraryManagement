@@ -10,8 +10,6 @@ class User : public UserBase
 public:
     User(QString name, int cardNumber, QString addr, int phoneNumber, QString username);
 
-
-
     bool CanCheckOutBook();
     void CheckOutBook(Book b);
 
@@ -19,7 +17,8 @@ public:
 
     void GetCheckedOutBooks(const Book arr[]);
 
-
+    template<typename T>
+    static bool instanceof(const T *ptr) { return (dynamic_cast<const User*>(ptr) != nullptr); }
 
 private:
     Book checkedOut[6];
