@@ -19,7 +19,11 @@ SOURCES += main.cpp\
     assistant.cpp \
     librarydb.cpp \
     manager.cpp \
-    userbase.cpp
+    userbase.cpp \
+    userwindow.cpp \
+    assistantwindow.cpp \
+    managerwindow.cpp \
+    addnewuser.cpp
 
 HEADERS  += mainwindow.h \
     user.h \
@@ -28,6 +32,14 @@ HEADERS  += mainwindow.h \
     assistant.h \
     librarydb.h \
     manager.h \
-    userbase.h
+    userbase.h \
+    userwindow.h \
+    assistantwindow.h \
+    managerwindow.h \
+    addnewuser.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    userwindow.ui \
+    assistantwindow.ui \
+    managerwindow.ui \
+    addnewuser.ui
