@@ -67,7 +67,7 @@ bool LibraryDB::LogIn(const QString username, const QString pass)
  *
  * Returns false if non-existent.
  */
-bool LibraryDB::Authenticate(Staff *s)
+bool LibraryDB::Authenticate(UserBase *s)
 {
     if(Staff::instanceof(s))
     {
@@ -76,7 +76,6 @@ bool LibraryDB::Authenticate(Staff *s)
             return true;
         }
     }
-
     return false;
 }
 

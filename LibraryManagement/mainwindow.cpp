@@ -16,10 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     LibraryDB::instance()->AddUser(b, QString("sparta2"));
     LibraryDB::instance()->AddStaff(a);
 
-    qDebug() << a->GetUsername() << "Instanceof of user" << User::instanceof(b);
-    qDebug() << b->GetUsername() << "Instanceof of user" << User::instanceof(a);
-//    LibraryDB::instance()->Authenticate(a);
-//    LibraryDB::instance()->Authenticate(b);
+    LibraryDB::instance()->Authenticate(a);
+    LibraryDB::instance()->Authenticate(b);
 }
 
 MainWindow::~MainWindow()

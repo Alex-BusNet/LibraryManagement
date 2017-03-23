@@ -23,7 +23,7 @@ public:
     void RemoveStaff(Staff* s);
 
     bool LogIn(const QString username, const QString pass);
-    bool Authenticate(Staff *s);
+    bool Authenticate(UserBase *s);
 
     void AddBook(Book b);
     void RemoveBook(Book b);
