@@ -38,3 +38,38 @@ QString UserBase::GetUsername() const
 {
     return this->username;
 }
+
+QString UserBase::GetName() const
+{
+    return this->name;
+}
+
+QString UserBase::GetAddress() const
+{
+    return this->address;
+}
+
+int UserBase::GetPhoneNumber() const
+{
+    return this->phoneNumber;
+}
+
+int UserBase::GetCardNumber() const
+{
+    return this->cardNumber;
+}
+
+bool UserBase::CanCheckOutBook()
+{
+    return false;
+}
+
+void UserBase::ReturnBook(const Book &b)
+{
+
+}
+
+void UserBase::CheckOutBook(const Book &b)
+{
+
+}

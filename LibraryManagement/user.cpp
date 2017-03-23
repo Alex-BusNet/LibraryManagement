@@ -28,7 +28,7 @@ bool User::CanCheckOutBook()
     return true;
 }
 
-void User::CheckOutBook(Book b)
+void User::CheckOutBook(const Book &b)
 {
     for(int i = 0; i < 6; i++)
     {
@@ -52,7 +52,7 @@ void User::CheckOutBook(Book b)
  * the book at the last indexed checked is set to NULL
  * regardless if it is already NULL.
  */
-void User::ReturnBook(Book b)
+void User::ReturnBook(const Book &b)
 {
     for(int i = 0; i < 6; i++)
     {

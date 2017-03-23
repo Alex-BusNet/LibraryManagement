@@ -10,10 +10,9 @@ class User : public UserBase
 public:
     User(QString name, int cardNumber, QString addr, int phoneNumber, QString username);
 
-    bool CanCheckOutBook();
-    void CheckOutBook(Book b);
-
-    void ReturnBook(Book b);
+    bool CanCheckOutBook() override;
+    void CheckOutBook(const Book &b) override;
+    void ReturnBook(const Book &b) override;
 
     void GetCheckedOutBooks(const Book arr[]);
 

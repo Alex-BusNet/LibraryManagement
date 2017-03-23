@@ -2,8 +2,7 @@
 #define USERBASE_H
 
 #include <QString>
-
-
+#include "datatypes.h"
 
 class UserBase
 {
@@ -17,6 +16,14 @@ public:
     void SetUsername(QString un);
 
     virtual QString GetUsername() const;
+    virtual QString GetName() const;
+    virtual QString GetAddress() const;
+    virtual int GetPhoneNumber() const;
+    virtual int GetCardNumber() const;
+
+    virtual bool CanCheckOutBook();
+    virtual void ReturnBook(const Book &b);
+    virtual void CheckOutBook(const Book &b);
 
     bool operator==(const UserBase &other) { return (other.cardNumber == cardNumber); }
 

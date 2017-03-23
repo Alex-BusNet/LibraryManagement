@@ -2,6 +2,7 @@
 #define DATATYPES_H
 
 #include <QString>
+#include <QDebug>
 
 struct Book
 {
@@ -11,12 +12,41 @@ struct Book
     int copies;
     bool longTerm;
 
-    bool operator==(const Book& other) { return (ISBN == other.ISBN); }
-    bool operator==(const int& i) { return (ISBN == i); }
-    Book operator=(const Book& other) { return other; }
-    Book operator=(const int& i) { if(i == 0) { Book b; b.title.clear(); b.author.clear(); b.ISBN = 0; b.copies = 0; return b; } }
-    bool operator!=(const Book& other) { return (other.ISBN != ISBN); }
-    bool operator!=(const int& i) { return (ISBN != i); }
+    bool operator ==(const Book& other) const
+    {
+        return (this->ISBN == other.ISBN);
+    }
+
+    bool operator !=(const Book& other) const
+    {
+        return (this->ISBN != other.ISBN);
+    }
+
+    void operator =(const Book& other)
+    {
+        qDebug() << "Book Operator=";
+        this->title = other.title;
+        this->author = other.author;
+        this->ISBN = other.ISBN;
+        this->copies = other.copies;
+        this->longTerm = other.longTerm;
+    }
+
+    bool operator ==(const int& i)
+    {
+        return (ISBN == i);
+    }
+
+    Book operator =(const int& i)
+    {
+        Book b{author, title, i, copies, longTerm};
+        return b;
+    }
+
+    bool operator !=(const int& i)
+    {
+        return (ISBN != i);
+    }
 };
 
 struct BookReciept

@@ -8,7 +8,6 @@ LibraryDB *LibraryDB::instance()
     return libDb;
 }
 
-
 /*
  * AddUser takes in a user object and a passwork.
  * If the username already exists, AddUser returns false.
@@ -48,15 +47,18 @@ void LibraryDB::RemoveStaff(Staff *s)
 /*
  * LogIn takes in a username and password and
  * checks if they are registered in the system.
+ * Returns false if passwords do not match OR
+ * username is not in list of registered users.
  */
 bool LibraryDB::LogIn(const QString username, const QString pass)
 {
+    if(!memberLogins.contains(username))
+        return false;
+
     QString storedPass = memberLogins.value(username);
 
     if(storedPass == pass)
-    {
         return true;
-    }
 
     return false;
 }
@@ -69,8 +71,10 @@ bool LibraryDB::LogIn(const QString username, const QString pass)
  */
 bool LibraryDB::Authenticate(UserBase *s)
 {
+    qDebug() << s->GetName() << "is a staff object:" << Staff::instanceof(s);
     if(Staff::instanceof(s))
     {
+        qDebug() << s->GetName() << "is a registered staff member:" << staffMembers.contains(static_cast<Staff*>(s));
         if(staffMembers.contains(static_cast<Staff*>(s)))
         {
             return true;
