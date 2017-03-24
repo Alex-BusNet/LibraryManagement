@@ -1,8 +1,8 @@
 #include "user.h"
 
 
-User::User(QString name, int cardNumber, QString addr, int phoneNumber, QString username) :
-    UserBase(name, cardNumber, addr, phoneNumber, username)
+User::User(QString name, QString addr, int phoneNumber, QString username) :
+    UserBase(name, addr, phoneNumber, username)
 {
     for(int i = 0; i < 6; i++)
     {

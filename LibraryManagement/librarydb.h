@@ -7,6 +7,7 @@
 #include "user.h"
 #include "datatypes.h"
 #include "staff.h"
+#include "manager.h"
 
 class LibraryDB : public QObject
 {
@@ -19,6 +20,7 @@ public:
     bool AddUser(UserBase *u, QString pass);
     void RemoveUser(UserBase *u);
     QVector<UserBase*> GetAllUsers();
+    UserBase* GetUser(QString username);
     
     bool AddStaff(Staff* s);
     void RemoveStaff(Staff* s);

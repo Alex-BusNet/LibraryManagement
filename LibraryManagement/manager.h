@@ -1,12 +1,21 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include "assistant.h"
+#include "staff.h"
 
-class Manager : public Assistant
+class Manager : public Staff
 {
 public:
-    Manager(QString name, int cardNumber, QString addr, int phoneNumber, QString username);
+    Manager(QString name, QString addr, int phoneNumber, QString username);
+
+    void AddBook(Book b);
+    void RemoveBook(Book b);
+
+    void AddUser(User u);
+    void RemoveUser(User u);
+
+    template<typename T>
+    static bool instanceof(const T *ptr) { return (dynamic_cast<const Manager*>(ptr) != nullptr); }
 };
 
 #endif // MANAGER_H

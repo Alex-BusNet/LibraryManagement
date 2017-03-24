@@ -7,7 +7,7 @@
 class UserBase
 {
 public:
-    UserBase(QString name, int cardNumber, QString addr, int phoneNumber, QString username);
+    UserBase(QString name, QString addr, int phoneNumber, QString username);
 
     void SetName(QString n);
     void SetAddress(QString a);

@@ -1,6 +1,6 @@
 #include "userbase.h"
 
-UserBase::UserBase(QString name, int cardNumber, QString addr, int phoneNumber, QString username)
+UserBase::UserBase(QString name, QString addr, int phoneNumber, QString username)
 {
     this->name = name;
     this->cardNumber = cardNumber;

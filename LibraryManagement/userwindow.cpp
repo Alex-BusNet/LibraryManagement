@@ -6,7 +6,7 @@ userWindow::userWindow(QWidget *parent) :
     ui(new Ui::userWindow)
 {
     ui->setupUi(this);
-    ui->tableWidget->
+//    ui->tableWidget->
 }
 
 userWindow::~userWindow()
@@ -16,5 +16,5 @@ userWindow::~userWindow()
 
 void userWindow::on_tableWidget_2_itemClicked(QTableWidgetItem *item)
 {
-    ui->tableWidget_2->
+//    ui->tableWidget_2->
 }

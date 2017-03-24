@@ -16,7 +16,6 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     user.cpp \
     staff.cpp \
-    assistant.cpp \
     librarydb.cpp \
     manager.cpp \
     userbase.cpp \
@@ -29,7 +28,6 @@ HEADERS  += mainwindow.h \
     user.h \
     datatypes.h \
     staff.h \
-    assistant.h \
     librarydb.h \
     manager.h \
     userbase.h \

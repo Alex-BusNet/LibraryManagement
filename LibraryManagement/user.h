@@ -8,7 +8,7 @@
 class User : public UserBase
 {
 public:
-    User(QString name, int cardNumber, QString addr, int phoneNumber, QString username);
+    User(QString name, QString addr, int phoneNumber, QString username);
 
     bool CanCheckOutBook() override;
     void CheckOutBook(const Book &b) override;

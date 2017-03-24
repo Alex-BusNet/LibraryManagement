@@ -1,8 +1,8 @@
 #include "staff.h"
 #include <QDebug>
 
-Staff::Staff(QString name, int cardNumber, QString addr, int phoneNumber, QString username) :
-    UserBase(name, cardNumber, addr, phoneNumber, username)
+Staff::Staff(QString name, QString addr, int phoneNumber, QString username) :
+    UserBase(name, addr, phoneNumber, username)
 {
     for(int i = 0; i < 12; i++)
     {

@@ -15,11 +15,14 @@ LibraryDB *LibraryDB::instance()
  */
 bool LibraryDB::AddUser(UserBase *u, QString pass)
 {
+    static int memberNumber = 000000000;
     if(memberLogins.contains(u->GetUsername()))
     {
         return false;
     }
-
+    memberNumber++;
+    u->SetCardNumber(memberNumber);
+    qDebug() << u->GetUsername() << memberNumber;
     registeredUsers.push_back(u);
     memberLogins.insert(u->GetUsername(), pass);
 
@@ -29,6 +32,22 @@ bool LibraryDB::AddUser(UserBase *u, QString pass)
 void LibraryDB::RemoveUser(UserBase *u)
 {
 
+}
+
+QVector<UserBase *> LibraryDB::GetAllUsers()
+{
+    return this->registeredUsers;
+}
+
+UserBase *LibraryDB::GetUser(QString username)
+{
+    foreach(UserBase* u, registeredUsers)
+    {
+        if(u->GetUsername() == username)
+            return u;
+    }
+
+    return NULL;
 }
 
 bool LibraryDB::AddStaff(Staff* s)
@@ -69,7 +88,7 @@ bool LibraryDB::LogIn(const QString username, const QString pass)
  *
  * Returns false if non-existent.
  */
-bool LibraryDB::Authenticate(UserBase *s)
+int LibraryDB::Authenticate(UserBase *s)
 {
     qDebug() << s->GetName() << "is a staff object:" << Staff::instanceof(s);
     if(Staff::instanceof(s))
@@ -77,10 +96,19 @@ bool LibraryDB::Authenticate(UserBase *s)
         qDebug() << s->GetName() << "is a registered staff member:" << staffMembers.contains(static_cast<Staff*>(s));
         if(staffMembers.contains(static_cast<Staff*>(s)))
         {
-            return true;
+            if(Manager::instanceof(s))
+            {
+                //Manager level access
+                return 2;
+            }
+
+            //Staff level access
+            return 1;
         }
     }
-    return false;
+
+    //User level access
+    return 0;
 }
 
 void LibraryDB::AddBook(Book b)
@@ -125,22 +153,27 @@ QVector<Book> LibraryDB::GetBooks(const QString title, const QString author)
 
 Book LibraryDB::GetBook(const int ISBN)
 {
-
+    return Book{"", "", 0, QVector<int>{0}};
 }
 
 Book LibraryDB::GetBook(const QString title, const QString author) const
 {
+    return Book{"", "", 0, QVector<int>{0}};
+}
 
+QVector<Book> LibraryDB::GetAllBooks()
+{
+    return this->masterList;
 }
 
 int LibraryDB::GetCopiesOfBook(const int ISBN)
 {
-
+    return 0;
 }
 
 int LibraryDB::GetCopiesOfBook(const QString title, const QString author)
 {
-
+    return 0;
 }
 
 void LibraryDB::CheckOutBook(const User u, const Book b)

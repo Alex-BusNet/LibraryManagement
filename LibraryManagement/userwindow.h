@@ -2,6 +2,7 @@
 #define USERWINDOW_H
 
 #include <QDialog>
+#include <QTableWidget>
 
 namespace Ui {
 class userWindow;

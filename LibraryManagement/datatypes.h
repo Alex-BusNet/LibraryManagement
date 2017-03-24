@@ -28,7 +28,7 @@ struct Book
         this->title = other.title;
         this->author = other.author;
         this->ISBN = other.ISBN;
-        this->copies = other.copies;
+        this->copiesAvailable = other.copiesAvailable;
         this->longTerm = other.longTerm;
     }
 
