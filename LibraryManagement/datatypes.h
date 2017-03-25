@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QDebug>
+#include <QDate>
 
 struct Book
 {
@@ -52,6 +53,8 @@ struct BookReciept
 {
     int userNo;
     int ISBN;
+    QDate dateDue;
+    bool needsReminder;
 };
 
 #endif // DATATYPES_H

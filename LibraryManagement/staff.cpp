@@ -37,7 +37,7 @@ void Staff::ReturnBook(const Book &b)
                     break;
             }
 
-            checkedOut[j].ISBN = 0;
+            checkedOut[j] = Book{"", "", 0, QVector<int>{0}, false};
             break;
         }
     }

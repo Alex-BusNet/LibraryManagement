@@ -65,14 +65,14 @@ void User::ReturnBook(const Book &b)
             for(; j < 6; j++)
             {
                 //Check to see if there is a book in the next slot
-                if(checkedOut[j] != 0)
+                if(checkedOut[j].ISBN != 0)
                     checkedOut[j - 1] = checkedOut[j];
                 else
                     break;
             }
 
             //Clear the book at j.
-            checkedOut[j] = 0;
+            checkedOut[j] = Book{"", "", 0, QVector<int>{0}, false};
             break;
         }
     }

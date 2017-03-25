@@ -4,7 +4,7 @@
 #include <QDate>
 #include <QObject>
 #include <QVector>
-#include "user.h"
+#include "userbase.h"
 #include "datatypes.h"
 #include "staff.h"
 #include "manager.h"
@@ -18,41 +18,54 @@ public:
     static LibraryDB *instance();
 
     bool AddUser(UserBase *u, QString pass);
-    void RemoveUser(UserBase *u);
+    void RemoveUser(int index);
     QVector<UserBase*> GetAllUsers();
     UserBase* GetUser(QString username);
+    UserBase* GetUser(int userNumber);
     
     bool AddStaff(Staff* s);
-    void RemoveStaff(Staff* s);
+    void RemoveStaff(int index);
 
     bool LogIn(const QString username, const QString pass);
     int Authenticate(UserBase *s);
 
-    void AddBook(Book b);
-    void RemoveBook(Book b);
-    void EditBook(int targetISBN, Book editedBook);
+    void AddBook(Book *b);
+    void RemoveBook(int index);
+    void EditBook(int index, Book *editedBook);
 
-    QVector<Book> GetBooks(const QString title = " ", const QString author = " ");
-    Book GetBook(const int ISBN);
-    Book GetBook(const QString title, const QString author) const;
+    QVector<Book *> GetBooks(const QString title = " ", const QString author = " ");
+    Book* GetBook(const int ISBN);
+    Book* GetBook(const QString title, const QString author);
     
-    QVector<Book> GetAllBooks();
+    QVector<Book*> GetAllBooks();
 
     int GetCopiesOfBook(const int ISBN);
     int GetCopiesOfBook(const QString title, const QString author);
 
-    void CheckOutBook(const User u, const Book b);
-    void BooksDueBy(QDate date, const QVector<Book> booksDue);
+    void ReturnBook(int ISBN);
+
+    void CheckOutBook(UserBase *u, Book *b, bool needsReminder, bool isReservation = false);
+    QVector<BookReciept*> BooksDueBy(QDate date) const;
+
+    void ReserveBook(UserBase *u, Book *b, QDate pickupDate);
+    QVector<BookReciept*> GetReservation(const int userNumber);
+    void FulfillReservation(BookReciept *br);
 
     void SaveData();
 
 private:
-    QVector<Book> masterList;
     QVector<UserBase*> registeredUsers;
     QVector<Staff*> staffMembers;
-    QVector<BookReciept> checkedOutBooks;
+
+    QVector<Book*> masterList;
+    QVector<BookReciept*> checkedOutBooks;
+    QVector<BookReciept*> reservedBooks;
+
+    QVector<Book*> oldBooks;
 
     QHash<QString, QString> memberLogins;
+
+    void SortCheckOutBooks();
 
 
 };
