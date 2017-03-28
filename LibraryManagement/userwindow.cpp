@@ -16,5 +16,5 @@ userWindow::~userWindow()
 
 void userWindow::on_tableWidget_2_itemClicked(QTableWidgetItem *item)
 {
-//    ui->tableWidget_2->
+    item->text().;
 }

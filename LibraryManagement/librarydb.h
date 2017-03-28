@@ -34,6 +34,7 @@ public:
     void EditBook(int index, Book *editedBook);
 
     QVector<Book *> GetBooks(const QString title = " ", const QString author = " ");
+    Book* GetBookAt(int index);
     Book* GetBook(const int ISBN);
     Book* GetBook(const QString title, const QString author);
     

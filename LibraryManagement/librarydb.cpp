@@ -208,6 +208,11 @@ QVector<Book*> LibraryDB::GetBooks(const QString title, const QString author)
     return results;
 }
 
+Book *LibraryDB::GetBookAt(int index)
+{
+    return masterList.at(index);
+}
+
 Book* LibraryDB::GetBook(const int ISBN)
 {
     foreach(Book* b, masterList)
