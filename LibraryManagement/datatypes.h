@@ -12,6 +12,8 @@ struct Book
     int ISBN;
     QVector<int> copiesAvailable;
     bool longTerm;
+    QString publisher;
+    int publishYear;
 
     bool operator ==(const Book& other) const
     {

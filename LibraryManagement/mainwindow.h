@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "useroptions.h"
+
 #include <QMainWindow>
 
 namespace Ui {
@@ -20,6 +22,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    UserOptions *uo;
 };
 
 #endif // MAINWINDOW_H

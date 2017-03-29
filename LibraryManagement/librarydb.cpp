@@ -1,5 +1,12 @@
 #include "librarydb.h"
 #include <QDebug>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QRegularExpression>
+#include <QVariantList>
+#include <QVariantList>
 
 Q_GLOBAL_STATIC(LibraryDB, libDb)
 
@@ -94,17 +101,17 @@ void LibraryDB::RemoveStaff(int index)
  * Returns false if passwords do not match OR
  * username is not in list of registered users.
  */
-bool LibraryDB::LogIn(const QString username, const QString pass)
+int LibraryDB::LogIn(const QString username, const QString pass)
 {
     if(!memberLogins.contains(username))
-        return false;
+        return -1;
 
     QString storedPass = memberLogins.value(username);
 
     if(storedPass == pass)
-        return true;
+        return Authenticate(GetUser(username));
 
-    return false;
+    return -1;
 }
 
 /*
@@ -333,7 +340,14 @@ void LibraryDB::CheckOutBook(UserBase *u, Book *b, bool needsReminder, bool isRe
             if(!isReservation)
             {
                 //Add the book to the user's checkedOut array
-                u->CheckOutBook(*b);
+                if(Staff::instanceof(u))
+                {
+                    static_cast<Staff*>(u)->CheckOutBook(*b);
+                }
+                else
+                {
+                    static_cast<User*>(u)->CheckOutBook(*b);
+                }
 
                 //Get the return date for the book
                 QDate dueDate = QDate::currentDate();
@@ -405,7 +419,88 @@ void LibraryDB::FulfillReservation(BookReciept *br)
 
 void LibraryDB::SaveData()
 {
+    QFile master("../LibraryManagement/Assets/BookList/master.json");
 
+    if(!master.open(QIODevice::WriteOnly))
+    {
+        qWarning("Could not open masterList save file");
+        return;
+    }
+
+    QJsonDocument doc;
+    QJsonArray arr;
+
+    //Info tags: ISBN, Book-title, Book-Author, YoP, publisher, image-url-s, image-url-m, image-url-l
+    for(int i = 0; i < masterList.size(); i++)
+    {
+        QJsonObject obj;
+        obj["isbn"] = masterList.at(i)->ISBN;
+        obj["book-title"] = masterList.at(i)->title;
+        obj["book-author"] = masterList.at(i)->author;
+        obj["longterm"] = masterList.at(i)->longTerm;
+        obj["publisher"] = masterList.at(i)->publisher;
+        obj["yop"] = masterList.at(i)->publishYear;
+
+        QJsonArray cArr;
+        for(int j = 0; j < masterList.at(i)->copiesAvailable.size(); j++)
+        {
+            cArr.push_back(masterList.at(i)->copiesAvailable.at(j));
+        }
+        obj["copies"] = cArr;
+
+        arr.push_back(obj);
+    }
+
+    doc.setArray(arr);
+    master.write(doc.toJson());
+    master.flush();
+    master.close();
+
+    QFile regUserFile("../LibraryManagement/Assets/UserLists/regUsers.json");
+
+    if(!regUserFile.open(QIODevice::WriteOnly))
+    {
+        qWarning("Could not open register users save file");
+        return;
+    }
+
+    arr.empty();
+
+    foreach(UserBase *ub, registeredUsers)
+    {
+        QJsonObject obj;
+        obj["name"] = ub->GetName();
+        obj["username"] = ub->GetUsername();
+        obj["cardnumber"] = ub->GetCardNumber();
+        obj["address"] = ub->GetAddress();
+        obj["phonenumber"] = ub->GetPhoneNumber();
+        obj["userlevel"] = Authenticate(ub);
+
+        if(obj["userlevel"].toInt() > 0)
+        {
+            Book arr[12];
+            static_cast<Staff*>(ub)->GetCheckedOutBooks(arr);
+            QJsonArray bArr;
+            for(int i = 0; i < 12; i++)
+            {
+                bArr.push_back(arr[i].ISBN);
+            }
+
+            obj["checkedoutbooks"] = bArr;
+        }
+        else
+        {
+            Book arr[6];
+            static_cast<User*>(ub)->GetCheckedOutBooks(arr);
+            QJsonArray bArr;
+            for(int i = 0; i < 6; i++)
+            {
+                bArr.push_back(arr[i].ISBN);
+            }
+
+            obj["checkedoutbooks"] = bArr;
+        }
+    }
 }
 
 void LibraryDB::SortCheckOutBooks()
@@ -425,5 +520,62 @@ void LibraryDB::SortCheckOutBooks()
             }
         }
     }
+}
+
+void LibraryDB::ParseDBJson()
+{
+    //-------------------
+    //Load the saved info for the database
+    //-------------------
+
+    QFile libFile("../LibraryManagement/Assets/BookList/listFormatted.json");
+
+    if(!libFile.open(QIODevice::ReadOnly))
+    {
+        qWarning("Could not open file");
+        return;
+    }
+
+    QByteArray libArr = libFile.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(libArr);
+    QJsonArray arr = doc.array();
+    Book *b;
+
+    qDebug() << "masterList size:" << arr.size();
+    for(int i = 0; i < arr.size(); i++)
+    {
+        QJsonObject obj = arr.at(i).toObject();
+
+        if(!obj.contains("longterm"))
+        {
+            obj["longterm"] = false;
+        }
+        if(!obj.contains("copies"))
+        {
+            obj["copies"] = QJsonArray{-1, -1, -1};
+        }
+
+        b = new Book
+        {
+            obj["book-title"].toString(),
+            obj["book-author"].toString(),
+            obj["isbn"].toInt(),
+            QVector<int>{-1},
+            obj["longterm"].toBool(),
+            obj["publisher"].toString(),
+            obj["yop"].toInt()
+        };
+
+        QJsonArray cArr = obj["copies"].toArray();
+        b->copiesAvailable.clear();
+        for(int i = 0; i < cArr.size(); i++)
+        {
+            b->copiesAvailable.push_back(cArr[i].toInt());
+        }
+
+        masterList.push_back(b);
+    }
+
+    qDebug() << "Parse Complete";
 }
 

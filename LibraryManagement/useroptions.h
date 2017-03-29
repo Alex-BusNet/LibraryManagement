@@ -4,19 +4,19 @@
 #include <QMainWindow>
 
 namespace Ui {
-class userOptions;
+class UserOptions;
 }
 
-class userOptions : public QMainWindow
+class UserOptions : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit userOptions(QWidget *parent = 0);
-    ~userOptions();
+    explicit UserOptions(QWidget *parent = 0);
+    ~UserOptions();
 
 private:
-    Ui::userOptions *ui;
+    Ui::UserOptions *ui;
 };
 
 #endif // USEROPTIONS_H

@@ -40,21 +40,22 @@ MainWindow::~MainWindow()
 void MainWindow::on_login_clicked()
 {
     QString un = ui->username->text(), pw = ui->password->text();
-    if(LibraryDB::instance()->LogIn(un, pw))
+
+    int loadUI = LibraryDB::instance()->LogIn(un, pw);
+    if(loadUI >= 0)
     {
-        UserBase* u = LibraryDB::instance()->GetUser(un);
-        int loadUI = LibraryDB::instance()->Authenticate(u);
         qDebug() << "User has level access:" << loadUI;
 
-        //----------------------------
-        //Development testing
-        QVector<UserBase*> users = LibraryDB::instance()->GetAllUsers();
-        foreach(UserBase* ub, users)
-        {
-            qDebug() << ub->GetName() << ub->GetUsername() << ub->GetCardNumber();
-        }
+        LibraryDB::instance()->ParseDBJson();
 
-        //-----------------------------
+//        if(uo != NULL)
+//        {
+//            delete uo;
+//        }
+
+        //Need to add user access level to c'tor
+//        uo = new UserOptions(this/*, loadUI*/);
+//        uo->show()
 
     }
     else

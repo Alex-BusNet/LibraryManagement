@@ -1,14 +1,14 @@
 #include "useroptions.h"
 #include "ui_useroptions.h"
 
-userOptions::userOptions(QWidget *parent) :
+UserOptions::UserOptions(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::userOptions)
+    ui(new Ui::UserOptions)
 {
     ui->setupUi(this);
 }
 
-userOptions::~userOptions()
+UserOptions::~UserOptions()
 {
     delete ui;
 }

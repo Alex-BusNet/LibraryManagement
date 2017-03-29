@@ -12,7 +12,7 @@ Staff::Staff(QString name, QString addr, int phoneNumber, QString username) :
 
 bool Staff::CanCheckOutBook()
 {
-    if(checkedOut[11].ISBN != 0)
+    if(checkedOut[11] != 0)
     {
         qDebug() << this->GetName() << "Cannot check out anymore books";
         return false;
@@ -57,4 +57,9 @@ void Staff::CheckOutBook(const Book &b)
         }
     }
 
+}
+
+void Staff::GetCheckedOutBooks(const Book arr[])
+{
+    arr = checkedOut;
 }

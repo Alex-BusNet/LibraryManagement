@@ -26,7 +26,7 @@ public:
     bool AddStaff(Staff* s);
     void RemoveStaff(int index);
 
-    bool LogIn(const QString username, const QString pass);
+    int LogIn(const QString username, const QString pass);
     int Authenticate(UserBase *s);
 
     void AddBook(Book *b);
@@ -53,6 +53,7 @@ public:
     void FulfillReservation(BookReciept *br);
 
     void SaveData();
+    void ParseDBJson();
 
 private:
     QVector<UserBase*> registeredUsers;
