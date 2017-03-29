@@ -69,6 +69,7 @@ private:
 
     void SortCheckOutBooks();
 
+    int memberNumber = 00000000;
 
 };
 

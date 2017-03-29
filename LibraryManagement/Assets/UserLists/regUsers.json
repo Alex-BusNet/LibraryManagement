@@ -1,0 +1,40 @@
+[
+    {
+        "address": "1294 Peachtree Ave.",
+        "cardnumber": 1,
+        "checkedoutbooks": [
+            2001572553,
+            1795164012,
+            12174512,
+            469762076,
+            0,
+            12173512,
+            2001463251,
+            499143024,
+            1639008,
+            12173660,
+            8,
+            0
+        ],
+        "name": "Alex",
+        "phonenumber": 1260588259,
+        "userlevel": 2,
+        "username": "arport"
+    },
+    {
+        "address": "12345 Peachtree Ave",
+        "cardnumber": 2,
+        "checkedoutbooks": [
+            2001572553,
+            1795164012,
+            12174512,
+            469762076,
+            0,
+            12173512
+        ],
+        "name": "Sparta",
+        "phonenumber": 149477148,
+        "userlevel": 0,
+        "username": "sparta"
+    }
+]

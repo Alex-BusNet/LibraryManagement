@@ -47,6 +47,7 @@ void MainWindow::on_login_clicked()
         qDebug() << "User has level access:" << loadUI;
 
         LibraryDB::instance()->ParseDBJson();
+        LibraryDB::instance()->SaveData();
 
 //        if(uo != NULL)
 //        {
@@ -54,8 +55,8 @@ void MainWindow::on_login_clicked()
 //        }
 
         //Need to add user access level to c'tor
-//        uo = new UserOptions(this/*, loadUI*/);
-//        uo->show()
+//        uo = new UserOptions(0/*, loadUI*/);
+//        uo->show();
 
     }
     else

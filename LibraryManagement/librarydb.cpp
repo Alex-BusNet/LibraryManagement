@@ -22,7 +22,7 @@ LibraryDB *LibraryDB::instance()
  */
 bool LibraryDB::AddUser(UserBase *u, QString pass)
 {
-    static int memberNumber = 000000000;
+
     if(memberLogins.contains(u->GetUsername()))
     {
         return false;
@@ -419,6 +419,7 @@ void LibraryDB::FulfillReservation(BookReciept *br)
 
 void LibraryDB::SaveData()
 {
+    qDebug() << "Saving data";
     QFile master("../LibraryManagement/Assets/BookList/master.json");
 
     if(!master.open(QIODevice::WriteOnly))
@@ -464,7 +465,7 @@ void LibraryDB::SaveData()
         return;
     }
 
-    arr.empty();
+    QJsonArray ruArr;
 
     foreach(UserBase *ub, registeredUsers)
     {
@@ -500,7 +501,39 @@ void LibraryDB::SaveData()
 
             obj["checkedoutbooks"] = bArr;
         }
+
+        ruArr.push_back(obj);
     }
+
+    doc.setArray(ruArr);
+    regUserFile.write(doc.toJson());
+    regUserFile.flush();
+    regUserFile.close();
+
+    QFile userLogins("../LIbraryManagement/Assets/UserLists/logins.json");
+    if(!userLogins.open(QIODevice::WriteOnly))
+    {
+        qWarning("Could not open user login save file");
+        return;
+    }
+
+    QJsonArray ulArr;
+
+    foreach(QString key, memberLogins.keys())
+    {
+        QJsonObject obj;
+        obj["username"] = key;
+        obj["password"] = memberLogins.value(key);
+
+        ulArr.push_back(obj);
+    }
+
+    doc.setArray(ulArr);
+    userLogins.write(doc.toJson());
+    userLogins.flush();
+    userLogins.close();
+
+    qDebug() << "Save complete";
 }
 
 void LibraryDB::SortCheckOutBooks()
