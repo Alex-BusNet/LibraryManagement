@@ -13,12 +13,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->badLogin->setVisible(false);
     ui->password->setEchoMode(QLineEdit::Password);
 
-    Manager *a = new Manager("Alex", "1294 Peachtree Ave.", 5555555555, "arport");
-    User *b = new User("Sparta", "12345 Peachtree Ave", 4444444444, "sparta");
+    LibraryDB::instance()->ParseDBJson();
+//    Manager *a = new Manager("Alex", "1294 Peachtree Ave.", 5555555555, "arport");
+//    User *b = new User("Sparta", "12345 Peachtree Ave", 4444444444, "sparta");
 
-    LibraryDB::instance()->AddUser(a, QString("sparta"));
-    LibraryDB::instance()->AddUser(b, QString("sparta2"));
-    LibraryDB::instance()->AddStaff(a);
+//    LibraryDB::instance()->AddUser(a, QString("sparta"));
+//    LibraryDB::instance()->AddUser(b, QString("sparta2"));
+//    LibraryDB::instance()->AddStaff(a);
 
 //    qDebug() << "Log in successful for" << a->GetName() <<  LibraryDB::instance()->LogIn(a->GetUsername(), "sparta");
 //    qDebug() << "Log in successful for" << b->GetName() <<  LibraryDB::instance()->LogIn(b->GetUsername(), "sparta2");
@@ -45,8 +46,6 @@ void MainWindow::on_login_clicked()
     if(loadUI >= 0)
     {
         qDebug() << "User has level access:" << loadUI;
-
-        LibraryDB::instance()->ParseDBJson();
         LibraryDB::instance()->SaveData();
 
 //        if(uo != NULL)

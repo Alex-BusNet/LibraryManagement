@@ -24,6 +24,7 @@ public:
     virtual bool CanCheckOutBook();
     virtual void ReturnBook(const Book &b);
     virtual void CheckOutBook(const Book &b);
+    virtual void LoadCheckOutData(int index, const Book &b);
 
     bool operator==(const UserBase &other) { return (other.cardNumber == cardNumber); }
 

@@ -13,6 +13,7 @@ public:
     bool CanCheckOutBook() override;
     void CheckOutBook(const Book &b) override;
     void ReturnBook(const Book &b) override;
+    void LoadCheckOutData(int index, const Book &b) override;
 
     void GetCheckedOutBooks(const Book arr[]);
 

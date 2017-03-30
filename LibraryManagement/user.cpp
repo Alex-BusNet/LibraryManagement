@@ -78,6 +78,11 @@ void User::ReturnBook(const Book &b)
     }
 }
 
+void User::LoadCheckOutData(int index, const Book &b)
+{
+    checkedOut[index] = b;
+}
+
 void User::GetCheckedOutBooks(const Book arr[])
 {
     arr = checkedOut;

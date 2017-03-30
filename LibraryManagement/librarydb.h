@@ -71,6 +71,9 @@ private:
 
     int memberNumber = 00000000;
 
+    void ParseBookData();
+    void ParseUserData();
+
 };
 
 #endif // LIBRARYDB_H

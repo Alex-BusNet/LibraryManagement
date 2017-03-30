@@ -1,6 +1,8 @@
 #include "librarydb.h"
 #include <QDebug>
 #include <QFile>
+#include <QFutureSynchronizer>
+#include <QtConcurrent>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -228,7 +230,7 @@ Book* LibraryDB::GetBook(const int ISBN)
             return b;
     }
 
-    return new Book{"", "", 0, QVector<int>{0}, false};
+    return masterList.at(0);
 }
 
 Book* LibraryDB::GetBook(const QString title, const QString author)
@@ -239,7 +241,7 @@ Book* LibraryDB::GetBook(const QString title, const QString author)
             return b;
     }
 
-    return new Book{"", "", 0, QVector<int>{0}, false};
+    return masterList.at(0);
 }
 
 QVector<Book*> LibraryDB::GetAllBooks()
@@ -555,13 +557,10 @@ void LibraryDB::SortCheckOutBooks()
     }
 }
 
-void LibraryDB::ParseDBJson()
+void LibraryDB::ParseBookData()
 {
-    //-------------------
-    //Load the saved info for the database
-    //-------------------
 
-    QFile libFile("../LibraryManagement/Assets/BookList/listFormatted.json");
+    QFile libFile("../LibraryManagement/Assets/BookList/master.json");
 
     if(!libFile.open(QIODevice::ReadOnly))
     {
@@ -592,7 +591,7 @@ void LibraryDB::ParseDBJson()
         {
             obj["book-title"].toString(),
             obj["book-author"].toString(),
-            obj["isbn"].toInt(),
+            obj["isbn"].toString().toInt(),
             QVector<int>{-1},
             obj["longterm"].toBool(),
             obj["publisher"].toString(),
@@ -608,7 +607,122 @@ void LibraryDB::ParseDBJson()
 
         masterList.push_back(b);
     }
+}
+
+void LibraryDB::ParseUserData()
+{
+    QFile regUserFile("../LibraryManagement/Assets/UserLists/regUsers.json");
+
+    if(!regUserFile.open(QIODevice::ReadOnly))
+    {
+        qWarning("Could not open register users save file");
+        return;
+    }
+
+    QByteArray userArr = regUserFile.readAll();
+    QJsonDocument uDoc = QJsonDocument::fromJson(userArr);
+    QJsonArray uArr = uDoc.array();
+    User* u;
+    Staff* s;
+    Manager* m;
+    int userLvl;
+
+    for(int i = 0; i < uArr.size(); i++)
+    {
+        QJsonObject obj = uArr[i].toObject();
+        userLvl = obj["userlevel"].toInt();
+
+        if(userLvl == 0) //Normal User
+        {
+            u = new User(
+                    obj["name"].toString(),
+                    obj["address"].toString(),
+                    obj["phonenumber"].toInt(),
+                    obj["username"].toString());
+            u->SetCardNumber(obj["cardnumber"].toInt());
+
+            QJsonArray bArr = obj["checkedoutbooks"].toArray();
+            for(int i = 0; i < bArr.size(); i++)
+            {
+                int ISBN = bArr[i].toInt();
+                Book *b = GetBook(ISBN);
+                u->LoadCheckOutData(i, *b);
+            }
+
+            registeredUsers.push_back(u);
+        }
+        else if(userLvl == 1) //Staff
+        {
+            s = new Staff(
+                    obj["name"].toString(),
+                    obj["address"].toString(),
+                    obj["phonenumber"].toInt(),
+                    obj["username"].toString());
+            s->SetCardNumber(obj["cardnumber"].toInt());
+
+            registeredUsers.push_back(s);
+            staffMembers.push_back(s);
+
+            QJsonArray bArr = obj["checkedoutbooks"].toArray();
+            for(int i = 0; i < bArr.size(); i++)
+            {
+                int ISBN = bArr[i].toInt();
+                Book *b = GetBook(ISBN);
+                s->LoadCheckOutData(i, *b);
+            }
+        }
+        else if(userLvl == 2) //Manager
+        {
+            m = new Manager(
+                    obj["name"].toString(),
+                    obj["address"].toString(),
+                    obj["phonenumber"].toInt(),
+                    obj["username"].toString());
+            m->SetCardNumber(obj["cardnumber"].toInt());
+
+            registeredUsers.push_back(m);
+            staffMembers.push_back(m);
+
+            QJsonArray bArr = obj["checkedoutbooks"].toArray();
+            for(int i = 0; i < bArr.size(); i++)
+            {
+                int ISBN = bArr[i].toInt();
+                Book *b = GetBook(ISBN);
+                m->LoadCheckOutData(i, *b);
+
+            }
+        }
+    }
+
+    QFile userLogins("../LibraryManagement/Assets/UserLists/logins.json");
+    if(!userLogins.open(QIODevice::ReadOnly))
+    {
+        qWarning("Could not open user login save file");
+        return;
+    }
+
+    QByteArray loginArr = userLogins.readAll();
+    QJsonDocument lDoc = QJsonDocument::fromJson(loginArr);
+    QJsonArray lArr = lDoc.array();
+
+    for(int i = 0; i < lArr.size(); i++)
+    {
+        QJsonObject obj = lArr[i].toObject();
+        memberLogins.insert(obj["username"].toString(), obj["password"].toString());
+    }
+}
+
+void LibraryDB::ParseDBJson()
+{
+    //-------------------
+    //Load the saved info for the database
+    //-------------------
+
+    masterList.push_back(new Book{"Title", "Author", 0, QVector<int>{-1,-1,-1}, false, "Publisher", 0});
+    QFutureSynchronizer<void> sync;
+    sync.addFuture(QtConcurrent::run(this, LibraryDB::ParseBookData));
+    sync.addFuture(QtConcurrent::run(this, LibraryDB::ParseUserData));
+    sync.waitForFinished();
 
     qDebug() << "Parse Complete";
 }
-

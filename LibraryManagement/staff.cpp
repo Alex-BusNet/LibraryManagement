@@ -59,6 +59,11 @@ void Staff::CheckOutBook(const Book &b)
 
 }
 
+void Staff::LoadCheckOutData(int index, const Book &b)
+{
+    checkedOut[index] = b;
+}
+
 void Staff::GetCheckedOutBooks(const Book arr[])
 {
     arr = checkedOut;

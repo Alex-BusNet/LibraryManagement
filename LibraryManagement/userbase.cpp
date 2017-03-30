@@ -73,3 +73,8 @@ void UserBase::CheckOutBook(const Book &b)
 {
 
 }
+
+void UserBase::LoadCheckOutData(int index, const Book &b)
+{
+
+}
