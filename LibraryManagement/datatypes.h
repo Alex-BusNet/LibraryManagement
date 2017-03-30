@@ -27,6 +27,7 @@ struct Book
 
     void operator =(const Book& other)
     {
+        qDebug() << "Book Operator=";
         this->title = other.title;
         this->author = other.author;
         this->ISBN = other.ISBN;

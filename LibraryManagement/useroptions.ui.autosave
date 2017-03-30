@@ -27,7 +27,7 @@
      <string>List of Books</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget">
+   <widget class="QTableWidget" name="book_table">
     <property name="geometry">
      <rect>
       <x>40</x>

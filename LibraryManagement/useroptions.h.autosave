@@ -20,6 +20,8 @@ private slots:
 
     void on_save_button_clicked();
 
+    void on_book_table_doubleClicked(const QModelIndex &index);
+    
 private:
     Ui::UserOptions *ui;
 };
