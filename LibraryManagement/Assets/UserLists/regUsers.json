@@ -17,7 +17,7 @@
             0
         ],
         "name": "Alex",
-        "phonenumber": 0,
+        "phonenumber": "5555555555",
         "userlevel": 2,
         "username": "arport"
     },
@@ -33,7 +33,7 @@
             0
         ],
         "name": "Sparta",
-        "phonenumber": 0,
+        "phonenumber": "4444444444",
         "userlevel": 0,
         "username": "sparta"
     }

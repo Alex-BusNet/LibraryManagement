@@ -1,6 +1,6 @@
 #include "manager.h"
 
-Manager::Manager(QString name, QString addr, int phoneNumber, QString username) :
+Manager::Manager(QString name, QString addr, QString phoneNumber, QString username) :
     Staff(name, addr, phoneNumber, username)
 {
 

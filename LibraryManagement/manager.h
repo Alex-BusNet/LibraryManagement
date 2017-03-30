@@ -6,7 +6,7 @@
 class Manager : public Staff
 {
 public:
-    Manager(QString name, QString addr, int phoneNumber, QString username);
+    Manager(QString name, QString addr, QString phoneNumber, QString username);
 
     void AddBook(Book b);
     void RemoveBook(Book b);

@@ -6,7 +6,7 @@
 class Staff : public UserBase
 {
 public:
-    Staff(QString name, QString addr, int phoneNumber, QString username);
+    Staff(QString name, QString addr, QString phoneNumber, QString username);
 
     bool CanCheckOutBook() override;
     void ReturnBook(const Book &b) override ;

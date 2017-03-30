@@ -637,7 +637,7 @@ void LibraryDB::ParseUserData()
             u = new User(
                     obj["name"].toString(),
                     obj["address"].toString(),
-                    obj["phonenumber"].toInt(),
+                    obj["phonenumber"].toString(),
                     obj["username"].toString());
             u->SetCardNumber(obj["cardnumber"].toInt());
 
@@ -656,7 +656,7 @@ void LibraryDB::ParseUserData()
             s = new Staff(
                     obj["name"].toString(),
                     obj["address"].toString(),
-                    obj["phonenumber"].toInt(),
+                    obj["phonenumber"].toString(),
                     obj["username"].toString());
             s->SetCardNumber(obj["cardnumber"].toInt());
 
@@ -676,7 +676,7 @@ void LibraryDB::ParseUserData()
             m = new Manager(
                     obj["name"].toString(),
                     obj["address"].toString(),
-                    obj["phonenumber"].toInt(),
+                    obj["phonenumber"].toString(),
                     obj["username"].toString());
             m->SetCardNumber(obj["cardnumber"].toInt());
 

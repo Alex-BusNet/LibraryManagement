@@ -1,6 +1,6 @@
 #include "userbase.h"
 
-UserBase::UserBase(QString name, QString addr, int phoneNumber, QString username)
+UserBase::UserBase(QString name, QString addr, QString phoneNumber, QString username)
 {
     this->name = name;
     this->cardNumber = cardNumber;
@@ -19,7 +19,7 @@ void UserBase::SetAddress(QString a)
     this->address = a;
 }
 
-void UserBase::SetPhoneNumber(int pn)
+void UserBase::SetPhoneNumber(QString pn)
 {
     this->phoneNumber = pn;
 }
@@ -49,7 +49,7 @@ QString UserBase::GetAddress() const
     return this->address;
 }
 
-int UserBase::GetPhoneNumber() const
+QString UserBase::GetPhoneNumber() const
 {
     return this->phoneNumber;
 }

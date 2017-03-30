@@ -7,18 +7,18 @@
 class UserBase
 {
 public:
-    UserBase(QString name, QString addr, int phoneNumber, QString username);
+    UserBase(QString name, QString addr, QString phoneNumber, QString username);
 
     void SetName(QString n);
     void SetAddress(QString a);
-    void SetPhoneNumber(int pn);
+    void SetPhoneNumber(QString pn);
     void SetCardNumber(int cn);
     void SetUsername(QString un);
 
     virtual QString GetUsername() const;
     virtual QString GetName() const;
     virtual QString GetAddress() const;
-    virtual int GetPhoneNumber() const;
+    virtual QString GetPhoneNumber() const;
     virtual int GetCardNumber() const;
 
     virtual bool CanCheckOutBook();
@@ -35,7 +35,7 @@ private:
     QString username;
     int cardNumber;
     QString address;
-    int phoneNumber;
+    QString phoneNumber;
 };
 
 #endif // USERBASE_H
