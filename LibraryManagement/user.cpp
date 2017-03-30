@@ -83,7 +83,10 @@ void User::LoadCheckOutData(int index, const Book &b)
     checkedOut[index] = b;
 }
 
-void User::GetCheckedOutBooks(const Book arr[])
+void User::GetCheckedOutBooks(Book (&arr)[6])
 {
-    arr = checkedOut;
+    for(int i = 0; i < 6; i++)
+    {
+        arr[i] = checkedOut[i];
+    }
 }

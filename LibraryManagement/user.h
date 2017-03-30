@@ -15,7 +15,7 @@ public:
     void ReturnBook(const Book &b) override;
     void LoadCheckOutData(int index, const Book &b) override;
 
-    void GetCheckedOutBooks(const Book arr[]);
+    void GetCheckedOutBooks(Book (&arr)[6]);
 
 private:
     Book checkedOut[6];

@@ -64,7 +64,10 @@ void Staff::LoadCheckOutData(int index, const Book &b)
     checkedOut[index] = b;
 }
 
-void Staff::GetCheckedOutBooks(const Book arr[])
+void Staff::GetCheckedOutBooks(Book (&arr)[12])
 {
-    arr = checkedOut;
+    for(int i = 0; i < 12; i++)
+    {
+        arr[i] = checkedOut[i];
+    }
 }
