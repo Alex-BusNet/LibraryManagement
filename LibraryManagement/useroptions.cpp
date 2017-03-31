@@ -8,24 +8,38 @@ UserOptions::UserOptions(QWidget *parent) :
 {
     ui->setupUi(this);
     int row = 0;
+    ui->tableWidget->setColumnCount(7);
+    ui->tableWidget->setRowCount(260453);
+
+    QTableWidgetItem *title;
+    QTableWidgetItem *author;
+    QTableWidgetItem *ISBN;
+    QTableWidgetItem *copies;
+    QTableWidgetItem *longTerm;
+    QTableWidgetItem *publisher;
+    QTableWidgetItem *publishYear;
+
+    ui->tableWidget->setSortingEnabled(false);
+
     foreach(Book* b, LibraryDB::instance()->GetAllBooks()){
 
-    QTableWidgetItem *title = new QTableWidgetItem(b->title);
-        tableWidget->setItem(row, 0, newItem);
-    QTableWidgetItem *author = new QTableWidgetItem(b->author);
-        tableWidget->setItem(row, 0, newItem);
-    QTableWidgetItem *ISBN = new QTableWidgetItem(b->ISBN);
-        tableWidget->setItem(row, 0, newItem);
-    QTableWidgetItem *copies = new QTableWidgetItem(b->copiesAvailable);
-        tableWidget->setItem(row, 0, newItem);
-    QTableWidgetItem *longTerm = new QTableWidgetItem(b->longTerm);
-        tableWidget->setItem(row, 0, newItem);
-    QTableWidgetItem *publisher = new QTableWidgetItem(b->publisher);
-        tableWidget->setItem(row, 0, newItem);
-    QTableWidgetItem *publishYear = new QTableWidgetItem(b->publishYear);
-        tableWidget->setItem(row, 0, newItem);
+        title = new QTableWidgetItem(b->title);
+        author = new QTableWidgetItem(b->author);
+        ISBN = new QTableWidgetItem(QString::number(b->ISBN));
+        copies = new QTableWidgetItem(QString::number(LibraryDB::instance()->GetCopiesOfBook(b->ISBN)));
+        longTerm = new QTableWidgetItem((b->longTerm) ? "4 Weeks" : "1 Week");
+        publisher = new QTableWidgetItem(b->publisher);
+        publishYear = new QTableWidgetItem(QString::number(b->publishYear));
 
-    row++;
+        ui->tableWidget->setItem(row, 0, title);
+        ui->tableWidget->setItem(row, 1, author);
+        ui->tableWidget->setItem(row, 2, ISBN);
+        ui->tableWidget->setItem(row, 3, copies);
+        ui->tableWidget->setItem(row, 4, longTerm);
+        ui->tableWidget->setItem(row, 5, publisher);
+        ui->tableWidget->setItem(row, 6, publishYear);
+
+        row++;
     }
 }
 
@@ -37,12 +51,13 @@ UserOptions::~UserOptions()
 void UserOptions::on_save_quit_button_clicked()
 {
     LibraryDB::instance()->SaveData();
+    this->close();
 }
 
 void UserOptions::on_save_button_clicked()
 {
     LibraryDB::instance()->SaveData();
-    this->close();
+//    this->close();
 }
 
 void UserOptions::on_book_table_doubleClicked(const QModelIndex &index)

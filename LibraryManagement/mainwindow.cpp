@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->badLogin->setVisible(false);
     ui->password->setEchoMode(QLineEdit::Password);
+    uo = NULL;
 
     LibraryDB::instance()->ParseDBJson();
 //    Manager *a = new Manager("Alex", "1294 Peachtree Ave.", 5555555555, "arport");
@@ -46,16 +47,16 @@ void MainWindow::on_login_clicked()
     if(loadUI >= 0)
     {
         qDebug() << "User has level access:" << loadUI;
-        LibraryDB::instance()->SaveData();
+//        LibraryDB::instance()->SaveData();
 
-//        if(uo != NULL)
-//        {
-//            delete uo;
-//        }
+        if(uo != NULL)
+        {
+            delete uo;
+        }
 
         //Need to add user access level to c'tor
-//        uo = new UserOptions(0/*, loadUI*/);
-//        uo->show();
+        uo = new UserOptions(0/*, loadUI*/);
+        uo->show();
 
     }
     else
