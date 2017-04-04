@@ -1,18 +1,19 @@
 #ifndef USEROPTIONS_H
 #define USEROPTIONS_H
 
-#include <QMainWindow>
+#include <QWidget>
+#include <ui_useroptions.h>
 
 namespace Ui {
 class UserOptions;
 }
 
-class UserOptions : public QMainWindow
+class UserOptions : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit UserOptions(QWidget *parent = 0);
+    explicit UserOptions(QWidget *parent = 0, int userLevel = 0);
     ~UserOptions();
 
 private slots:

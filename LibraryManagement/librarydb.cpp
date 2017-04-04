@@ -591,7 +591,7 @@ void LibraryDB::ParseBookData()
         {
             obj["book-title"].toString(),
             obj["book-author"].toString(),
-            obj["isbn"].toString().toInt(),
+            obj["isbn"].toInt(),
             QVector<int>{-1},
             obj["longterm"].toBool(),
             obj["publisher"].toString(),

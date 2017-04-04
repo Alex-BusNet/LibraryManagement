@@ -55,7 +55,7 @@ void MainWindow::on_login_clicked()
         }
 
         //Need to add user access level to c'tor
-        uo = new UserOptions(0/*, loadUI*/);
+        uo = new UserOptions(0, loadUI);
         uo->show();
 
     }
