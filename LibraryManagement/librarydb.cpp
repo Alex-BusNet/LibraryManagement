@@ -574,7 +574,7 @@ void LibraryDB::ParseBookData()
     Book *b;
 
     qDebug() << "masterList size:" << arr.size();
-    for(int i = 0; i < arr.size(); i++)
+    for(int i = 1; i < arr.size(); i++)
     {
         QJsonObject obj = arr.at(i).toObject();
 
@@ -607,6 +607,8 @@ void LibraryDB::ParseBookData()
 
         masterList.push_back(b);
     }
+
+    libFile.close();
 }
 
 void LibraryDB::ParseUserData()
@@ -694,6 +696,8 @@ void LibraryDB::ParseUserData()
         }
     }
 
+    regUserFile.close();
+
     QFile userLogins("../LibraryManagement/Assets/UserLists/logins.json");
     if(!userLogins.open(QIODevice::ReadOnly))
     {
@@ -710,6 +714,8 @@ void LibraryDB::ParseUserData()
         QJsonObject obj = lArr[i].toObject();
         memberLogins.insert(obj["username"].toString(), obj["password"].toString());
     }
+
+    userLogins.close();
 }
 
 void LibraryDB::ParseDBJson()
