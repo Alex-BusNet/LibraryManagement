@@ -422,7 +422,7 @@ void LibraryDB::FulfillReservation(BookReciept *br)
 void LibraryDB::SaveData()
 {
     qDebug() << "Saving data";
-    QFile master("../LibraryManagement/Assets/BookList/master.json");
+    QFile master("../LibraryManagement/Assets/BookList/master_50Books.json");
 
     if(!master.open(QIODevice::WriteOnly))
     {
@@ -576,6 +576,8 @@ void LibraryDB::ParseBookData()
     qDebug() << "masterList size:" << arr.size();
     for(int i = 1; i < arr.size(); i++)
     {
+        if(i > 50) { break; }
+
         QJsonObject obj = arr.at(i).toObject();
 
         if(!obj.contains("longterm"))

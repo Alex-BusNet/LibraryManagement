@@ -1,0 +1,665 @@
+[
+    {
+        "book-author": "Author",
+        "book-title": "Title",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 0,
+        "longterm": false,
+        "publisher": "Publisher",
+        "yop": 0
+    },
+    {
+        "book-author": "AAA",
+        "book-title": "AAA PET BOOK",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 1562512617,
+        "longterm": false,
+        "publisher": "AAA",
+        "yop": 0
+    },
+    {
+        "book-author": "Lawrence Hill",
+        "book-title": "Black Berry, Sweet Juice: On Being Black and White in Canada",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 2000202,
+        "longterm": false,
+        "publisher": "HarperFlamingo Canada",
+        "yop": 0
+    },
+    {
+        "book-author": "Andrew A. Rooney",
+        "book-title": "FEW MINUTES WITH ANDY ROONEY",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 20102011,
+        "longterm": false,
+        "publisher": "Scribner Paper Fiction",
+        "yop": 0
+    },
+    {
+        "book-author": "William Craig",
+        "book-title": "Enemy at the Gates: Movie Tie-In",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 142000000,
+        "longterm": false,
+        "publisher": "Penguin Books",
+        "yop": 0
+    },
+    {
+        "book-author": "Richard Monaco",
+        "book-title": "Parsival: Or, a Knight's Tale",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 20230001,
+        "longterm": false,
+        "publisher": "Simon &amp; Schuster",
+        "yop": 0
+    },
+    {
+        "book-author": "Kidd",
+        "book-title": "Lace and Steel",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 111111110,
+        "longterm": false,
+        "publisher": "Stationary Office Ltd.",
+        "yop": 0
+    },
+    {
+        "book-author": "James Herriot",
+        "book-title": "Bonny's Big Day",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 312010001,
+        "longterm": false,
+        "publisher": "St Martins Pr",
+        "yop": 0
+    },
+    {
+        "book-author": "Mark Vancil",
+        "book-title": "NBA: The Official Fan's Guide",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 2251000,
+        "longterm": false,
+        "publisher": "Harpercollins",
+        "yop": 0
+    },
+    {
+        "book-author": "Irwin Blacker",
+        "book-title": "The Elements of Screenwriting",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 20002203,
+        "longterm": false,
+        "publisher": "Collier Books",
+        "yop": 0
+    },
+    {
+        "book-author": "Michael E. N. Majerus",
+        "book-title": "Moths (New Naturalist)",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 2201410,
+        "longterm": false,
+        "publisher": "HarperCollins UK",
+        "yop": 0
+    },
+    {
+        "book-author": "John Bruce",
+        "book-title": "Airscream",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 2220032,
+        "longterm": false,
+        "publisher": "Collins",
+        "yop": 0
+    },
+    {
+        "book-author": "MANUEL MUJICA LAINEZ",
+        "book-title": "Bomarzo",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 1400000300,
+        "longterm": false,
+        "publisher": "Sudamericana",
+        "yop": 0
+    },
+    {
+        "book-author": "Robin Quivers",
+        "book-title": "Quivers",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 61010200,
+        "longterm": false,
+        "publisher": "Harper Mass Market Paperbacks (Mm)",
+        "yop": 0
+    },
+    {
+        "book-author": "Barbara Delinsky",
+        "book-title": "Sensuous Burgundy",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 61011010,
+        "longterm": false,
+        "publisher": "HarperTorch",
+        "yop": 0
+    },
+    {
+        "book-author": "David M Rorvik",
+        "book-title": "In his image: The cloning of a man",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 241100100,
+        "longterm": false,
+        "publisher": "H. Hamilton",
+        "yop": 0
+    },
+    {
+        "book-author": "Joseph O'Connor",
+        "book-title": "Way of Nlp (Thorsons Way of)",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 7110200,
+        "longterm": false,
+        "publisher": "Thorsons Publishers",
+        "yop": 0
+    },
+    {
+        "book-author": "John D. Altringham",
+        "book-title": "British Bats (Collins New Naturalist)",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 2201402,
+        "longterm": false,
+        "publisher": "Trafalgar Square",
+        "yop": 0
+    },
+    {
+        "book-author": "L. J. Smith",
+        "book-title": "Vampire Diaries #1: The Awakening (Vampire Diaries)",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 61020001,
+        "longterm": false,
+        "publisher": "Eos",
+        "yop": 0
+    },
+    {
+        "book-author": "Alwyn Crawshaw",
+        "book-title": "Learn to Paint Watercolours (Collins Learn to Paint)",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 4121120,
+        "longterm": false,
+        "publisher": "HarperCollins Publishers",
+        "yop": 0
+    },
+    {
+        "book-author": "Bernard Cornwell",
+        "book-title": "Sharpe's tiger: Richard Sharpe and the Siege of Seringapatam, 1799",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 2250101,
+        "longterm": false,
+        "publisher": "HarperCollins",
+        "yop": 0
+    },
+    {
+        "book-author": "Richard Adams",
+        "book-title": "Plague Dogs",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 140050000,
+        "longterm": false,
+        "publisher": "Penguin Putnam~mass",
+        "yop": 0
+    },
+    {
+        "book-author": "Barbara Gowdy",
+        "book-title": "The Romantic",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 2005050,
+        "longterm": false,
+        "publisher": "HarperFlamingo Canada",
+        "yop": 0
+    },
+    {
+        "book-author": "Charlotte Prentiss",
+        "book-title": "The Ocean Tribe",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 61010111,
+        "longterm": false,
+        "publisher": "HarperTorch",
+        "yop": 0
+    },
+    {
+        "book-author": "Barbara Delinsky",
+        "book-title": "A Time to Love",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 61011002,
+        "longterm": false,
+        "publisher": "HarperTorch",
+        "yop": 0
+    },
+    {
+        "book-author": "Sam Brown",
+        "book-title": "The Long Drift",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 61010030,
+        "longterm": false,
+        "publisher": "Harper Mass Market Paperbacks",
+        "yop": 0
+    },
+    {
+        "book-author": "Joy Adamson",
+        "book-title": "Pippa's challenge",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 2621010,
+        "longterm": false,
+        "publisher": "Collins &amp; Harvill Press",
+        "yop": 0
+    },
+    {
+        "book-author": "Laura Reese",
+        "book-title": "Topping from Below",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 312120001,
+        "longterm": false,
+        "publisher": "St Martins Pr",
+        "yop": 0
+    },
+    {
+        "book-author": "Michael Fedo",
+        "book-title": "The Man from Lake Wobegon",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 312000022,
+        "longterm": false,
+        "publisher": "St Martins Pr",
+        "yop": 0
+    },
+    {
+        "book-author": "Geoffrey Wolff",
+        "book-title": "Providence: A novel",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 140100121,
+        "longterm": false,
+        "publisher": "Penguin Books",
+        "yop": 0
+    },
+    {
+        "book-author": "Peter Ferdinand Drucker",
+        "book-title": "Adventures of a bystander",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 60111011,
+        "longterm": false,
+        "publisher": "Harper &amp; Row",
+        "yop": 0
+    },
+    {
+        "book-author": "Lynn Vanderzalm",
+        "book-title": "Finding Strength in Weakness",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 310200040,
+        "longterm": false,
+        "publisher": "Zondervan Publishing Company",
+        "yop": 0
+    },
+    {
+        "book-author": "Monzaemon Chikamatsu",
+        "book-title": "Four Major Plays of Chikamatsu",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 231111010,
+        "longterm": false,
+        "publisher": "Columbia University Press",
+        "yop": 0
+    },
+    {
+        "book-author": "Robert Kellogg",
+        "book-title": "The Sagas of Icelanders: A Selection (World of the Sagas)",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 141000031,
+        "longterm": false,
+        "publisher": "Penguin Books",
+        "yop": 0
+    },
+    {
+        "book-author": "Mike Jefferies",
+        "book-title": "Shadowlight (Loremasters of Elundium, Book 3)",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 61000310,
+        "longterm": false,
+        "publisher": "HarperPrism",
+        "yop": 0
+    },
+    {
+        "book-author": "Alan Taylor",
+        "book-title": "American Colonies (The Penguin History of the United States)",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 142002100,
+        "longterm": false,
+        "publisher": "Penguin Books",
+        "yop": 0
+    },
+    {
+        "book-author": "Dan Ariail",
+        "book-title": "The Carpenter's Apprentice: The Spiritual Biography of Jimmy Carter",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 310200121,
+        "longterm": false,
+        "publisher": "Zondervan Publishing Company",
+        "yop": 0
+    },
+    {
+        "book-author": "Oscar Wilde",
+        "book-title": "Lord Arthur Savile's Crime and Other Stories (Penguin Modern Classics)",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 140010211,
+        "longterm": false,
+        "publisher": "Penguin USA",
+        "yop": 0
+    },
+    {
+        "book-author": "Robert Frost",
+        "book-title": "Robert Frost: Poetry and Prose (Rinehart editions, 154)",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 30002060,
+        "longterm": false,
+        "publisher": "Henry Holt &amp; Co",
+        "yop": 0
+    },
+    {
+        "book-author": "Dharathula H. Millender",
+        "book-title": "Martin Luther King Jr. : Young Man with a Dream (Childhood Of Famous Americans)",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 20420102,
+        "longterm": false,
+        "publisher": "Aladdin",
+        "yop": 0
+    },
+    {
+        "book-author": "Herge",
+        "book-title": "Les Aventures de Tintin:Le Secret de La Licorne (French Edition of The Secret of the Unicorn)",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 0,
+        "longterm": false,
+        "publisher": "Casterman",
+        "yop": 0
+    },
+    {
+        "book-author": "Guy Gavriel Kay",
+        "book-title": "Tigana",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 140130101,
+        "longterm": false,
+        "publisher": "Penguin Books Ltd",
+        "yop": 0
+    },
+    {
+        "book-author": "Patricia Moyes",
+        "book-title": "Angel Death",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 30600030,
+        "longterm": false,
+        "publisher": "Henry Holt &amp; Company",
+        "yop": 0
+    },
+    {
+        "book-author": "Barbara Raskin",
+        "book-title": "Hot Flashes",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 312010400,
+        "longterm": false,
+        "publisher": "St Martins Pr",
+        "yop": 0
+    },
+    {
+        "book-author": "Kamila Shamsie",
+        "book-title": "Kartography",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 151010102,
+        "longterm": false,
+        "publisher": "Harcourt",
+        "yop": 0
+    },
+    {
+        "book-author": "Matthew Thomas",
+        "book-title": "TERROR FIRMA",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 7100221,
+        "longterm": false,
+        "publisher": "Trafalgar Square",
+        "yop": 0
+    },
+    {
+        "book-author": "WILLIAM BOYD",
+        "book-title": "Any Human Heart",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 1400031001,
+        "longterm": false,
+        "publisher": "Vintage",
+        "yop": 0
+    },
+    {
+        "book-author": "Barbara Michaels",
+        "book-title": "Be Buried in the Rain",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 61010103,
+        "longterm": false,
+        "publisher": "HarperCollins Publishers",
+        "yop": 0
+    },
+    {
+        "book-author": "Scott McBain",
+        "book-title": "The Coins of Judas",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 2261200,
+        "longterm": false,
+        "publisher": "HarperCollins",
+        "yop": 0
+    },
+    {
+        "book-author": "Stephen Harrigan",
+        "book-title": "The Gates of the Alamo",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 141000023,
+        "longterm": false,
+        "publisher": "Penguin Books",
+        "yop": 0
+    },
+    {
+        "book-author": "Sidonie Gabrielle Colette",
+        "book-title": "Cheri and the Last of Cheri",
+        "copies": [
+            -1,
+            -1,
+            -1
+        ],
+        "isbn": 140010203,
+        "longterm": false,
+        "publisher": "Viking Press",
+        "yop": 0
+    }
+]

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1181</width>
+    <width>1281</width>
     <height>566</height>
    </rect>
   </property>
@@ -33,7 +33,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1171</width>
+     <width>1281</width>
      <height>591</height>
     </rect>
    </property>
@@ -57,7 +57,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>1162</width>
+      <width>1271</width>
       <height>551</height>
      </rect>
     </property>
@@ -70,15 +70,21 @@
        <item>
         <widget class="QLineEdit" name="lineEdit">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-           <width>400</width>
+           <width>700</width>
            <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>700</width>
+           <height>16777215</height>
           </size>
          </property>
         </widget>
@@ -102,11 +108,11 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Minimum</enum>
+          <enum>QSizePolicy::MinimumExpanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>400</width>
+           <width>368</width>
            <height>20</height>
           </size>
          </property>
@@ -115,7 +121,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="tableLayout">
        <item>
         <widget class="QTableWidget" name="tableWidget">
          <property name="sizePolicy">
@@ -126,15 +132,24 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>780</width>
            <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>760</width>
+           <width>2000</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustToContents</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -253,7 +268,7 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>400</width>
+             <width>370</width>
              <height>0</height>
             </size>
            </property>
