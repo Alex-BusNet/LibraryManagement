@@ -22,6 +22,7 @@ public:
     QVector<UserBase*> GetAllUsers();
     UserBase* GetUser(QString username);
     UserBase* GetUser(int userNumber);
+    int GetNumberOfUsers();
     
     bool AddStaff(Staff* s);
     void RemoveStaff(int index);

@@ -73,6 +73,11 @@ UserBase *LibraryDB::GetUser(int userNumber)
     return NULL;
 }
 
+int LibraryDB::GetNumberOfUsers()
+{
+    return registeredUsers.size();
+}
+
 bool LibraryDB::AddStaff(Staff* s)
 {
     if(registeredUsers.contains(s))

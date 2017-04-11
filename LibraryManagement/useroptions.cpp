@@ -18,6 +18,9 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
     QTableWidgetItem *longTerm;
     QTableWidgetItem *publisher;
     QTableWidgetItem *publishYear;
+    QTableWidgetItem *userID;
+    QTableWidgetItem *userName;
+    QTableWidgetItem *userAccess;
 
     QStringList headers = {"Title", "Author", "ISBN", "Copies Available", "Check-out period", "Publisher" , "Year Published"};
 
@@ -57,6 +60,7 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
     {
         ui->addUserButton->setVisible(false);
         ui->removeUserButton->setVisible(false);
+        ui->editUserButton->setVisible(false);
         ui->borrowBookButton->setVisible(false);
         ui->returnBookButton->setVisible(false);
         ui->userIdLabel->setVisible(false);
@@ -66,6 +70,33 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
         ui->userInfoTable->setVisible(false);
         ui->userTableLabel->setVisible(false);
         ui->managerSpace->changeSize(10, 10, QSizePolicy::Fixed, QSizePolicy::Fixed);
+    }
+    else if(userLevel == 1)
+    {
+        ui->addUserButton->setVisible(false);
+        ui->removeUserButton->setVisible(false);
+        ui->editUserButton->setVisible(false);
+    }
+    else if(userLevel == 2)
+    {
+        int userRow = 0;
+        foreach(UserBase* ub, LibraryDB::instance()->GetAllUsers())
+        {
+            QStringList uheader = {"ID", "Name", "Acces Level" };
+            ui->userInfoTable->setColumnCount(3);
+            ui->userInfoTable->setRowCount(LibraryDB::instance()->GetNumberOfUsers());
+            ui->userInfoTable->setHorizontalHeaderLabels(uheader);
+
+            userID = new QTableWidgetItem(QString::number(ub->GetCardNumber()));
+            userName = new QTableWidgetItem(ub->GetName());
+            userAccess = new QTableWidgetItem(QString::number(LibraryDB::instance()->Authenticate(ub)));
+
+            ui->userInfoTable->setItem(userRow, 0, userID);
+            ui->userInfoTable->setItem(userRow, 1, userName);
+            ui->userInfoTable->setItem(userRow, 2, userAccess);
+
+            userRow++;
+        }
     }
 
     activeUserLevel = userLevel;
