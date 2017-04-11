@@ -20,11 +20,12 @@ private slots:
     void on_save_quit_button_clicked();
 
     void on_save_button_clicked();
-
-    void on_book_table_doubleClicked(const QModelIndex &index);
     
+    void on_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
+
 private:
     Ui::UserOptions *ui;
+    int activeUserLevel;
 };
 
 #endif // USEROPTIONS_H

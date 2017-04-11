@@ -9,7 +9,7 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
     ui->setupUi(this);
     int row = 0;
     ui->tableWidget->setColumnCount(7);
-    ui->tableWidget->setRowCount(260453);
+    ui->tableWidget->setRowCount(5662);
 
     QTableWidgetItem *title;
     QTableWidgetItem *author;
@@ -67,6 +67,8 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
         ui->userTableLabel->setVisible(false);
         ui->managerSpace->changeSize(10, 10, QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
+
+    activeUserLevel = userLevel;
 }
 
 UserOptions::~UserOptions()
@@ -86,7 +88,10 @@ void UserOptions::on_save_button_clicked()
 //    this->close();
 }
 
-void UserOptions::on_book_table_doubleClicked(const QModelIndex &index)
+void UserOptions::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
 {
-
+    if(activeUserLevel > 0)
+    {
+        //Open Edit book Dialog
+    }
 }

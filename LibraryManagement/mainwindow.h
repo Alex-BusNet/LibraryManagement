@@ -20,6 +20,8 @@ public:
 private slots:
     void on_login_clicked();
 
+    void on_password_returnPressed();
+
 private:
     Ui::MainWindow *ui;
     UserOptions *uo;

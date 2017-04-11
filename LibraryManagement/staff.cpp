@@ -1,4 +1,5 @@
 #include "staff.h"
+#include "librarydb.h"
 #include <QDebug>
 
 Staff::Staff(QString name, QString addr, QString phoneNumber, QString username) :
@@ -6,7 +7,7 @@ Staff::Staff(QString name, QString addr, QString phoneNumber, QString username) 
 {
     for(int i = 0; i < 12; i++)
     {
-        checkedOut[i].ISBN = 0;
+        checkedOut[i] = (*(LibraryDB::instance()->GetBookAt(0)));
     }
 }
 
@@ -37,7 +38,7 @@ void Staff::ReturnBook(const Book &b)
                     break;
             }
 
-            checkedOut[j] = Book{"", "", 0, QVector<int>{0}, false};
+            checkedOut[j] = (*(LibraryDB::instance()->GetBookAt(0)));
             break;
         }
     }
