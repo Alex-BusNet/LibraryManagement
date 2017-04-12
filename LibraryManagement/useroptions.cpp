@@ -2,6 +2,8 @@
 #include "ui_useroptions.h"
 #include "librarydb.h"
 
+#include <QDialog>
+
 UserOptions::UserOptions(QWidget *parent, int userLevel) :
     QWidget(parent),
     ui(new Ui::UserOptions)
@@ -13,7 +15,6 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
 
     QStringList headers = {"Title", "Author", "ISBN", "Copies Available", "Check-out period", "Publisher" , "Year Published"};
 
-    ui->tableWidget->setSortingEnabled(false);
     ui->tableWidget->setHorizontalHeaderLabels(headers);
 
     int i = 0;
@@ -62,6 +63,8 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
         ui->isbnLineEdit->setVisible(false);
         ui->userInfoTable->setVisible(false);
         ui->userTableLabel->setVisible(false);
+        ui->reservedListButton->setVisible(false);
+        ui->checkedOutListButton->setVisible(false);
         ui->managerSpace->changeSize(10, 10, QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
     else if(userLevel == 1)
@@ -92,12 +95,15 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
 
             userRow++;
         }
+
+        ui->editUserButton->setEnabled(false);
     }
     QStringList searchParams = {"Title", "Author", "ISBN"};
     ui->searchType->addItems(searchParams);
     ui->searchType->setCurrentIndex(0);
 
     activeUserLevel = userLevel;
+    LibraryDB::instance()->LoadSecondaryData();
 }
 
 void UserOptions::paintEvent(QPaintEvent *e)
@@ -163,6 +169,8 @@ void UserOptions::on_pushButton_clicked()
         // Skip book if it is the first book (Empty book reference)
         if(b == LibraryDB::instance()->GetAllBooks().at(0)) { continue; }
 
+        if(row == 5662) { break; }
+
         title = new QTableWidgetItem(b->title);
         author = new QTableWidgetItem(b->author);
         ISBN = new QTableWidgetItem(QString::number(b->ISBN));
@@ -181,4 +189,106 @@ void UserOptions::on_pushButton_clicked()
 
         row++;
     }
+}
+
+void UserOptions::on_reservedListButton_clicked()
+{
+    QDialog *reservedDisplay = new QDialog();
+    QTableWidget *tw = new QTableWidget();
+    tw->setColumnCount(4);
+
+    QStringList twheader = {"User Number", "ISBN", "Pickup Date" , "Needs Reminder"};
+    tw->setHorizontalHeaderLabels(twheader);
+    tw->setSortingEnabled(true);
+
+    QVector<BookReciept*> reservationList = LibraryDB::instance()->GetAllReservations();
+    int row = 0;
+    QTableWidgetItem* userNo;
+    QTableWidgetItem* isbn;
+    QTableWidgetItem* duedate;
+    QTableWidgetItem* needsreminder;
+
+    foreach(BookReciept *br, reservationList)
+    {
+        userNo = new QTableWidgetItem(QString(br->userNo));
+        isbn = new QTableWidgetItem(QString::number(br->ISBN));
+        duedate = new QTableWidgetItem(br->dateDue.toString());
+        needsreminder = new QTableWidgetItem(br->needsReminder);
+
+        tw->setItem(row, 0, userNo);
+        tw->setItem(row, 1, isbn);
+        tw->setItem(row, 2, duedate);
+        tw->setItem(row, 3, needsreminder);
+
+        row++;
+
+    }
+
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addWidget(tw);
+    reservedDisplay->setLayout(layout);
+
+    reservedDisplay->show();
+}
+
+void UserOptions::on_checkedOutListButton_clicked()
+{
+    QDialog *checkedoutDisplay = new QDialog();
+    QTableWidget *tw = new QTableWidget();
+    tw->setColumnCount(4);
+
+    QStringList twheader = {"User Number", "ISBN", "Due Date" , "Needs Reminder"};
+    tw->setHorizontalHeaderLabels(twheader);
+    tw->setSortingEnabled(true);
+
+    QVector<BookReciept*> checkoutList = LibraryDB::instance()->GetAllCheckedOutBooks();
+    int row = 0;
+    QTableWidgetItem* userNo;
+    QTableWidgetItem* isbn;
+    QTableWidgetItem* duedate;
+    QTableWidgetItem* needsreminder;
+
+    foreach(BookReciept *br, checkoutList)
+    {
+        userNo = new QTableWidgetItem(QString(br->userNo));
+        isbn = new QTableWidgetItem(QString::number(br->ISBN));
+        duedate = new QTableWidgetItem(br->dateDue.toString());
+        needsreminder = new QTableWidgetItem(br->needsReminder);
+
+        tw->setItem(row, 0, userNo);
+        tw->setItem(row, 1, isbn);
+        tw->setItem(row, 2, duedate);
+        tw->setItem(row, 3, needsreminder);
+
+        row++;
+
+    }
+
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addWidget(tw);
+    checkedoutDisplay->setLayout(layout);
+    checkedoutDisplay->setWindowTitle("Checked out Books");
+    checkedoutDisplay->show();
+
+}
+
+void UserOptions::on_editUserButton_clicked()
+{
+
+}
+
+void UserOptions::on_userInfoTable_itemActivated(QTableWidgetItem *item)
+{
+    ui->editUserButton->setEnabled(true);
+}
+
+void UserOptions::on_userInfoTable_cellDoubleClicked(int row, int column)
+{
+    qDebug() << "Edit User diag";
+    //Show Edit user dialog
+}
+
+void UserOptions::on_userInfoTable_cellChanged(int row, int column)
+{
+
 }

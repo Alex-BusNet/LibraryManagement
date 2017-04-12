@@ -36,25 +36,29 @@ public:
 
     QVector<Book *> GetBooks(const QString title = " ", const QString author = " ");
     Book* GetBookAt(int index);
-    Book* GetBook(const int ISBN);
+    Book* GetBook(const long long ISBN);
     Book* GetBook(const QString title, const QString author);
     
     QVector<Book*> GetAllBooks();
 
-    int GetCopiesOfBook(const int ISBN);
+    int GetCopiesOfBook(const long long ISBN);
     int GetCopiesOfBook(const QString title, const QString author);
 
-    void ReturnBook(int ISBN);
+    void ReturnBook(long long ISBN);
 
     void CheckOutBook(UserBase *u, Book *b, bool needsReminder, bool isReservation = false);
     QVector<BookReciept*> BooksDueBy(QDate date) const;
-
+    QVector<BookReciept*> GetAllCheckedOutBooks();
     void ReserveBook(UserBase *u, Book *b, QDate pickupDate);
     QVector<BookReciept*> GetReservation(const int userNumber);
     void FulfillReservation(BookReciept *br);
 
+    QVector<BookReciept*> GetAllReservations();
+
     void SaveData();
     void ParseDBJson();
+
+    void LoadSecondaryData();
 
 private:
     QVector<UserBase*> registeredUsers;
@@ -74,6 +78,10 @@ private:
 
     void ParseBookData();
     void ParseUserData();
+
+    void ParseReserved();
+    void ParseOld();
+    void ParseCheckedOut();
 
 };
 

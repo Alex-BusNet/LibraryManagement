@@ -26,6 +26,18 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_reservedListButton_clicked();
+
+    void on_checkedOutListButton_clicked();
+
+    void on_editUserButton_clicked();
+
+    void on_userInfoTable_itemActivated(QTableWidgetItem *item);
+
+    void on_userInfoTable_cellDoubleClicked(int row, int column);
+
+    void on_userInfoTable_cellChanged(int row, int column);
+
 private:
     Ui::UserOptions *ui;
     int activeUserLevel;

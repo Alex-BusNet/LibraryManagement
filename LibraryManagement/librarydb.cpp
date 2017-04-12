@@ -234,7 +234,7 @@ Book *LibraryDB::GetBookAt(int index)
     return masterList.at(index);
 }
 
-Book* LibraryDB::GetBook(const int ISBN)
+Book* LibraryDB::GetBook(const long long ISBN)
 {
     foreach(Book* b, masterList)
     {
@@ -261,7 +261,7 @@ QVector<Book*> LibraryDB::GetAllBooks()
     return this->masterList;
 }
 
-int LibraryDB::GetCopiesOfBook(const int ISBN)
+int LibraryDB::GetCopiesOfBook(const long long ISBN)
 {
     Book* b = GetBook(ISBN);
     int count = 0;
@@ -299,7 +299,7 @@ int LibraryDB::GetCopiesOfBook(const QString title, const QString author)
     return count;
 }
 
-void LibraryDB::ReturnBook(int ISBN)
+void LibraryDB::ReturnBook(long long ISBN)
 {
     foreach(BookReciept *br, checkedOutBooks)
     {
@@ -393,6 +393,11 @@ QVector<BookReciept*> LibraryDB::BooksDueBy(QDate date) const
     return booksDue;
 }
 
+QVector<BookReciept *> LibraryDB::GetAllCheckedOutBooks()
+{
+    return checkedOutBooks;
+}
+
 /*
  * ReserveBook functions similarly to CheckOutBook with the exception
  * of adding the book to the user's checked out array.
@@ -430,10 +435,15 @@ void LibraryDB::FulfillReservation(BookReciept *br)
     u->CheckOutBook(*(GetBook(br->ISBN)));
 }
 
+QVector<BookReciept *> LibraryDB::GetAllReservations()
+{
+    return reservedBooks;
+}
+
 void LibraryDB::SaveData()
 {
     qDebug() << "Saving data";
-    QFile master("../LibraryManagement/Assets/BookList/master_5662.json");
+    QFile master("../LibraryManagement/Assets/BookList/master_ver2.json");
 
     if(!master.open(QIODevice::WriteOnly))
     {
@@ -444,11 +454,11 @@ void LibraryDB::SaveData()
     QJsonDocument doc;
     QJsonArray arr;
 
-    //Info tags: ISBN, Book-title, Book-Author, YoP, publisher, image-url-s, image-url-m, image-url-l
+    //Info tags: ISBN, Book-title, Book-Author, YoP, publisher
     for(int i = 0; i < masterList.size(); i++)
     {
         QJsonObject obj;
-        obj["isbn"] = masterList.at(i)->ISBN;
+        obj["isbn"] = QString::number(masterList.at(i)->ISBN);
         obj["book-title"] = masterList.at(i)->title;
         obj["book-author"] = masterList.at(i)->author;
         obj["longterm"] = masterList.at(i)->longTerm;
@@ -551,6 +561,92 @@ void LibraryDB::SaveData()
     userLogins.flush();
     userLogins.close();
 
+    QFile reserved("../LibraryManagement/Assets/BookList/reservedList.json");
+    if(!reserved.open(QIODevice::WriteOnly))
+    {
+        qWarning("Could not open reserved books save file");
+        return;
+    }
+
+    QJsonArray rArr;
+
+    foreach(BookReciept* br, reservedBooks)
+    {
+        QJsonObject obj;
+        obj["userno"] = br->userNo;
+        obj["isbn"] = QString::number(br->ISBN);
+        obj["duedate"] = br->dateDue.toString();
+        obj["needsreminder"] = br->needsReminder;
+
+        rArr.push_back(obj);
+    }
+
+    doc.setArray(rArr);
+    reserved.write(doc.toJson());
+    reserved.flush();
+    reserved.close();
+
+    QFile checkedOutFile("../LibraryManagement/Assets/BookList/checkedOutList.json");
+    if(!checkedOutFile.open(QIODevice::WriteOnly))
+    {
+        qWarning("Could not open reserved books save file");
+        return;
+    }
+
+    QJsonArray choArr;
+
+    foreach(BookReciept* br, checkedOutBooks)
+    {
+        QJsonObject obj;
+        obj["userno"] = br->userNo;
+        obj["isbn"] = QString::number(br->ISBN);
+        obj["duedate"] = br->dateDue.toString();
+        obj["needsreminder"] = br->needsReminder;
+
+        choArr.push_back(obj);
+    }
+
+    doc.setArray(choArr);
+    checkedOutFile.write(doc.toJson());
+    checkedOutFile.flush();
+    checkedOutFile.close();
+
+    QFile oldBooksFile("../LibraryManagement/Assets/BookList/oldBooks.json");
+
+    if(!oldBooksFile.open(QIODevice::WriteOnly))
+    {
+        qWarning("Could not open old list save file");
+        return;
+    }
+
+    QJsonArray oArr;
+
+    //Info tags: ISBN, Book-title, Book-Author, YoP, publisher
+    for(int i = 0; i < oldBooks.size(); i++)
+    {
+        QJsonObject obj;
+        obj["isbn"] = QString::number(oldBooks.at(i)->ISBN);
+        obj["book-title"] = oldBooks.at(i)->title;
+        obj["book-author"] = oldBooks.at(i)->author;
+        obj["longterm"] = oldBooks.at(i)->longTerm;
+        obj["publisher"] = oldBooks.at(i)->publisher;
+        obj["yop"] = oldBooks.at(i)->publishYear;
+
+        QJsonArray cArr;
+        for(int j = 0; j < oldBooks.at(i)->copiesAvailable.size(); j++)
+        {
+            cArr.push_back(oldBooks.at(i)->copiesAvailable.at(j));
+        }
+        obj["copies"] = cArr;
+
+        oArr.push_back(obj);
+    }
+
+    doc.setArray(oArr);
+    oldBooksFile.write(doc.toJson());
+    oldBooksFile.flush();
+    oldBooksFile.close();
+
     qDebug() << "Save complete";
 }
 
@@ -575,7 +671,7 @@ void LibraryDB::SortCheckOutBooks()
 
 void LibraryDB::ParseBookData()
 {
-    QFile libFile("../LibraryManagement/Assets/BookList/master_5662.json");
+    QFile libFile("../LibraryManagement/Assets/BookList/master_ver2.json");
 
     if(!libFile.open(QIODevice::ReadOnly))
     {
@@ -589,7 +685,6 @@ void LibraryDB::ParseBookData()
     Book *b;
 
     qDebug() << "masterList size:" << arr.size();
-    //Display 5,662 books out of the 260,452 total.
     for(int i = 1; i < arr.size(); i++)
     {
         QJsonObject obj = arr.at(i).toObject();
@@ -607,7 +702,7 @@ void LibraryDB::ParseBookData()
         {
             obj["book-title"].toString(),
             obj["book-author"].toString(),
-            obj["isbn"].toInt(),
+            obj["isbn"].toString().toLongLong(),
             QVector<int>{-1},
             obj["longterm"].toBool(),
             obj["publisher"].toString(),
@@ -625,6 +720,7 @@ void LibraryDB::ParseBookData()
     }
 
     libFile.close();
+
 }
 
 void LibraryDB::ParseUserData()
@@ -733,6 +829,118 @@ void LibraryDB::ParseUserData()
     userLogins.close();
 }
 
+void LibraryDB::ParseReserved()
+{
+    QFile reservedFile("../LibraryManagement/Assets/BookList/reservedList.json");
+    if(!reservedFile.open(QIODevice::ReadOnly))
+    {
+        qWarning("Could not read reserved book list");
+        return;
+    }
+
+    QByteArray rByte = reservedFile.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(rByte);
+    QJsonArray resArr = doc.array();
+    QJsonObject obj;
+    BookReciept* br;
+
+    for(int i = 0; i < resArr.size(); i++)
+    {
+        obj = resArr[1].toObject();
+
+        br = new BookReciept
+        {
+            obj["userno"].toInt(),
+            QString(obj["isbn"].toString()).toLongLong(),
+            QDate().fromString(obj["duedate"].toString()),
+            obj["needsreminder"].toBool()
+        };
+
+        reservedBooks.push_back(br);
+    }
+
+    reservedFile.flush();
+    reservedFile.close();
+}
+
+void LibraryDB::ParseOld()
+{
+    QFile oldFile("../LibraryManagement/Assets/BookList/oldBooks.json");
+    if(!oldFile.open(QIODevice::ReadOnly))
+    {
+        qWarning("Could not open old book save file");
+        return;
+    }
+
+    QByteArray oldByte = oldFile.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(oldByte);
+    QJsonArray oldArr = doc.array();
+    QJsonObject obj;
+    Book *b;
+
+    for(int i = 0; i < oldArr.size(); i++)
+    {
+        obj = oldArr[i].toObject();
+
+        b = new Book
+        {
+                obj["book-title"].toString(),
+                obj["book-author"].toString(),
+                obj["isbn"].toInt(),
+                QVector<int>{-1},
+                obj["longterm"].toBool(),
+                obj["publisher"].toString(),
+                obj["yop"].toInt()
+        };
+
+        QJsonArray cArr = obj["copies"].toArray();
+        b->copiesAvailable.clear();
+        for(int i = 0; i < cArr.size(); i++)
+        {
+            b->copiesAvailable.push_back(cArr[i].toInt());
+        }
+
+        oldBooks.push_back(b);
+    }
+
+    oldFile.flush();
+    oldFile.close();
+}
+
+void LibraryDB::ParseCheckedOut()
+{
+    QFile checkedOutFile("../LibraryManagement/Assets/BookList/checkedOutList.json");
+    if(!checkedOutFile.open(QIODevice::ReadOnly))
+    {
+        qWarning("Could not read checked out book list");
+        return;
+    }
+
+    QByteArray rByte = checkedOutFile.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(rByte);
+    QJsonArray resArr = doc.array();
+    QJsonObject obj;
+    BookReciept* br;
+
+    for(int i = 0; i < resArr.size(); i++)
+    {
+        obj = resArr[1].toObject();
+
+        br = new BookReciept
+        {
+            obj["userno"].toInt(),
+            QString(obj["isbn"].toString()).toLongLong(),
+            QDate().fromString(obj["duedate"].toString()),
+            obj["needsreminder"].toBool()
+        };
+
+        reservedBooks.push_back(br);
+    }
+
+    checkedOutFile.flush();
+    checkedOutFile.close();
+}
+
 void LibraryDB::ParseDBJson()
 {
     //-------------------
@@ -744,4 +952,12 @@ void LibraryDB::ParseDBJson()
     ParseUserData();
 
     qDebug() << "Parse Complete";
+}
+
+void LibraryDB::LoadSecondaryData()
+{
+    QFutureSynchronizer<void> *sync = new QFutureSynchronizer<void>();
+    sync->addFuture(QtConcurrent::run(this, LibraryDB::ParseCheckedOut));
+    sync->addFuture(QtConcurrent::run(this, LibraryDB::ParseOld));
+    sync->addFuture(QtConcurrent::run(this, LibraryDB::ParseReserved));
 }
