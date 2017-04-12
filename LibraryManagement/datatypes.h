@@ -14,6 +14,7 @@ struct Book
     bool longTerm;
     QString publisher;
     int publishYear;
+    bool updatedSinceLastSave;
 
     bool operator ==(const Book& other) const
     {

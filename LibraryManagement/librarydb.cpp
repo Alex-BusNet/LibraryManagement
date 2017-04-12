@@ -189,18 +189,15 @@ void LibraryDB::EditBook(int index, Book *editedBook)
 
 QVector<Book*> LibraryDB::GetBooks(const QString title, const QString author)
 {
-    qDebug() << "Search Query" << title << author;
     QVector<Book*> results = {};
     if(title.trimmed() == "")
     {
         if(author.trimmed() != "")
         {
-            qDebug() << "Searching Authors";
             foreach(Book* b, masterList)
             {
                 if(b->author.contains(author, Qt::CaseInsensitive))
                 {
-                    qDebug() << "Match Found:" << b->title << b->author << b->ISBN;
                     results.push_back(b);
                 }
             }
@@ -210,12 +207,10 @@ QVector<Book*> LibraryDB::GetBooks(const QString title, const QString author)
     {
         if(title.trimmed() != "")
         {
-            qDebug() << "Searching Titles";
             foreach(Book *b, masterList)
             {
                 if(b->title.contains(title, Qt::CaseInsensitive))
                 {
-                    qDebug() << "Match Found:" << b->title << b->author << b->ISBN;
                     results.push_back(b);
                 }
             }
@@ -452,30 +447,35 @@ void LibraryDB::SaveData()
     }
 
     QJsonDocument doc;
-    QJsonArray arr;
 
     //Info tags: ISBN, Book-title, Book-Author, YoP, publisher
     for(int i = 0; i < masterList.size(); i++)
     {
-        QJsonObject obj;
-        obj["isbn"] = QString::number(masterList.at(i)->ISBN);
-        obj["book-title"] = masterList.at(i)->title;
-        obj["book-author"] = masterList.at(i)->author;
-        obj["longterm"] = masterList.at(i)->longTerm;
-        obj["publisher"] = masterList.at(i)->publisher;
-        obj["yop"] = masterList.at(i)->publishYear;
-
-        QJsonArray cArr;
-        for(int j = 0; j < masterList.at(i)->copiesAvailable.size(); j++)
+        if(masterList.at(i)->updatedSinceLastSave)
         {
-            cArr.push_back(masterList.at(i)->copiesAvailable.at(j));
-        }
-        obj["copies"] = cArr;
+            QJsonObject obj;
+            obj["isbn"] = QString::number(masterList.at(i)->ISBN);
+            obj["book-title"] = masterList.at(i)->title;
+            obj["book-author"] = masterList.at(i)->author;
+            obj["longterm"] = masterList.at(i)->longTerm;
+            obj["publisher"] = masterList.at(i)->publisher;
+            obj["yop"] = masterList.at(i)->publishYear;
+            obj["updatesincelastsave"] = false;
 
-        arr.push_back(obj);
+            QJsonArray cArr;
+            for(int j = 0; j < masterList.at(i)->copiesAvailable.size(); j++)
+            {
+                cArr.push_back(masterList.at(i)->copiesAvailable.at(j));
+            }
+
+            obj["copies"] = cArr;
+
+            masterArr.replace(i, obj);
+        }
+
     }
 
-    doc.setArray(arr);
+    doc.setArray(masterArr);
     master.write(doc.toJson());
     master.flush();
     master.close();
@@ -619,30 +619,32 @@ void LibraryDB::SaveData()
         return;
     }
 
-    QJsonArray oArr;
-
     //Info tags: ISBN, Book-title, Book-Author, YoP, publisher
     for(int i = 0; i < oldBooks.size(); i++)
     {
-        QJsonObject obj;
-        obj["isbn"] = QString::number(oldBooks.at(i)->ISBN);
-        obj["book-title"] = oldBooks.at(i)->title;
-        obj["book-author"] = oldBooks.at(i)->author;
-        obj["longterm"] = oldBooks.at(i)->longTerm;
-        obj["publisher"] = oldBooks.at(i)->publisher;
-        obj["yop"] = oldBooks.at(i)->publishYear;
-
-        QJsonArray cArr;
-        for(int j = 0; j < oldBooks.at(i)->copiesAvailable.size(); j++)
+        if(oldBooks.at(i)->updatedSinceLastSave)
         {
-            cArr.push_back(oldBooks.at(i)->copiesAvailable.at(j));
-        }
-        obj["copies"] = cArr;
+            QJsonObject obj;
+            obj["isbn"] = QString::number(oldBooks.at(i)->ISBN);
+            obj["book-title"] = oldBooks.at(i)->title;
+            obj["book-author"] = oldBooks.at(i)->author;
+            obj["longterm"] = oldBooks.at(i)->longTerm;
+            obj["publisher"] = oldBooks.at(i)->publisher;
+            obj["yop"] = oldBooks.at(i)->publishYear;
+            obj["updatesincelastsave"] = false;
 
-        oArr.push_back(obj);
+            QJsonArray cArr;
+            for(int j = 0; j < oldBooks.at(i)->copiesAvailable.size(); j++)
+            {
+                cArr.push_back(oldBooks.at(i)->copiesAvailable.at(j));
+            }
+            obj["copies"] = cArr;
+
+            oldArr.push_back(obj);
+        }
     }
 
-    doc.setArray(oArr);
+    doc.setArray(oldArr);
     oldBooksFile.write(doc.toJson());
     oldBooksFile.flush();
     oldBooksFile.close();
@@ -681,21 +683,27 @@ void LibraryDB::ParseBookData()
 
     QByteArray libArr = libFile.readAll();
     QJsonDocument doc = QJsonDocument::fromJson(libArr);
-    QJsonArray arr = doc.array();
+    masterArr = doc.array();
     Book *b;
 
-    qDebug() << "masterList size:" << arr.size();
-    for(int i = 1; i < arr.size(); i++)
+    qDebug() << "masterList size:" << masterArr.size();
+    for(int i = 1; i < masterArr.size(); i++)
     {
-        QJsonObject obj = arr.at(i).toObject();
+        QJsonObject obj = masterArr.at(i).toObject();
 
         if(!obj.contains("longterm"))
         {
             obj["longterm"] = false;
         }
+
         if(!obj.contains("copies"))
         {
             obj["copies"] = QJsonArray{-1, -1, -1};
+        }
+
+        if(!obj.contains("updatesincelastsave"))
+        {
+            obj["updatesincelastsave"] = false;
         }
 
         b = new Book
@@ -706,7 +714,8 @@ void LibraryDB::ParseBookData()
             QVector<int>{-1},
             obj["longterm"].toBool(),
             obj["publisher"].toString(),
-            obj["yop"].toInt()
+            obj["yop"].toInt(),
+            false
         };
 
         QJsonArray cArr = obj["copies"].toArray();
@@ -874,7 +883,7 @@ void LibraryDB::ParseOld()
 
     QByteArray oldByte = oldFile.readAll();
     QJsonDocument doc = QJsonDocument::fromJson(oldByte);
-    QJsonArray oldArr = doc.array();
+    oldArr = doc.array();
     QJsonObject obj;
     Book *b;
 
@@ -884,13 +893,14 @@ void LibraryDB::ParseOld()
 
         b = new Book
         {
-                obj["book-title"].toString(),
-                obj["book-author"].toString(),
-                obj["isbn"].toInt(),
-                QVector<int>{-1},
-                obj["longterm"].toBool(),
-                obj["publisher"].toString(),
-                obj["yop"].toInt()
+            obj["book-title"].toString(),
+            obj["book-author"].toString(),
+            obj["isbn"].toInt(),
+            QVector<int>{-1},
+            obj["longterm"].toBool(),
+            obj["publisher"].toString(),
+            obj["yop"].toInt(),
+            false
         };
 
         QJsonArray cArr = obj["copies"].toArray();

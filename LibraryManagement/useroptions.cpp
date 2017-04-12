@@ -24,6 +24,7 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
     {
         if(i == 0) { i++ ; continue; }
         else if(i == 5662) { break; }
+        else if(b->ISBN == 0) { continue; }
         else { i++; }
 
         title = new QTableWidgetItem(b->title);
@@ -167,9 +168,10 @@ void UserOptions::on_pushButton_clicked()
     foreach(Book* b, results)
     {
         // Skip book if it is the first book (Empty book reference)
-        if(b == LibraryDB::instance()->GetAllBooks().at(0)) { continue; }
+        if(b == LibraryDB::instance()->GetBookAt(0)) { continue; }
 
         if(row == 5662) { break; }
+        else if(b->ISBN == 0) { continue; }
 
         title = new QTableWidgetItem(b->title);
         author = new QTableWidgetItem(b->author);
@@ -261,7 +263,6 @@ void UserOptions::on_checkedOutListButton_clicked()
         tw->setItem(row, 3, needsreminder);
 
         row++;
-
     }
 
     QVBoxLayout *layout = new QVBoxLayout();
@@ -269,7 +270,6 @@ void UserOptions::on_checkedOutListButton_clicked()
     checkedoutDisplay->setLayout(layout);
     checkedoutDisplay->setWindowTitle("Checked out Books");
     checkedoutDisplay->show();
-
 }
 
 void UserOptions::on_editUserButton_clicked()

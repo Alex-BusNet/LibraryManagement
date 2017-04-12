@@ -2,6 +2,7 @@
 #define LIBRARYDB_H
 
 #include <QDate>
+#include <QJsonArray>
 #include <QObject>
 #include <QVector>
 #include "userbase.h"
@@ -83,6 +84,7 @@ private:
     void ParseOld();
     void ParseCheckedOut();
 
+    QJsonArray masterArr, oldArr;
 };
 
 #endif // LIBRARYDB_H
