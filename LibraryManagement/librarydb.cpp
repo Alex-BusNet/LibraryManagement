@@ -129,10 +129,8 @@ int LibraryDB::LogIn(const QString username, const QString pass)
  */
 int LibraryDB::Authenticate(UserBase *s)
 {
-    qDebug() << s->GetName() << "is a staff object:" << Staff::instanceof(s);
     if(Staff::instanceof(s))
     {
-        qDebug() << s->GetName() << "is a registered staff member:" << staffMembers.contains(static_cast<Staff*>(s));
         if(staffMembers.contains(static_cast<Staff*>(s)))
         {
             if(Manager::instanceof(s))
@@ -191,15 +189,20 @@ void LibraryDB::EditBook(int index, Book *editedBook)
 
 QVector<Book*> LibraryDB::GetBooks(const QString title, const QString author)
 {
+    qDebug() << "Search Query" << title << author;
     QVector<Book*> results = {};
     if(title.trimmed() == "")
     {
         if(author.trimmed() != "")
         {
+            qDebug() << "Searching Authors";
             foreach(Book* b, masterList)
             {
-                if(b->author == author)
+                if(b->author.contains(author, Qt::CaseInsensitive))
+                {
+                    qDebug() << "Match Found:" << b->title << b->author << b->ISBN;
                     results.push_back(b);
+                }
             }
         }
     }
@@ -207,10 +210,14 @@ QVector<Book*> LibraryDB::GetBooks(const QString title, const QString author)
     {
         if(title.trimmed() != "")
         {
+            qDebug() << "Searching Titles";
             foreach(Book *b, masterList)
             {
-                if(b->title == title)
+                if(b->title.contains(title, Qt::CaseInsensitive))
+                {
+                    qDebug() << "Match Found:" << b->title << b->author << b->ISBN;
                     results.push_back(b);
+                }
             }
         }
     }
@@ -483,6 +490,7 @@ void LibraryDB::SaveData()
         obj["phonenumber"] = ub->GetPhoneNumber();
         obj["userlevel"] = Authenticate(ub);
 
+        int index = 0;
         if(obj["userlevel"].toInt() > 0)
         {
             Book arr[12];
@@ -490,7 +498,9 @@ void LibraryDB::SaveData()
             QJsonArray bArr;
             for(int i = 0; i < 12; i++)
             {
-                bArr.push_back(masterList.indexOf(&arr[i]));
+                index = masterList.indexOf(&arr[i]);
+                if(index == -1) {index = 0; }
+                bArr.push_back(index);
             }
 
             obj["checkedoutbooks"] = bArr;
@@ -502,7 +512,9 @@ void LibraryDB::SaveData()
             QJsonArray bArr;
             for(int i = 0; i < 6; i++)
             {
-                bArr.push_back(masterList.indexOf(&arr[i]));
+                index = masterList.indexOf(&arr[i]);
+                if(index == -1) {index = 0; }
+                bArr.push_back(index);
             }
 
             obj["checkedoutbooks"] = bArr;
@@ -563,7 +575,6 @@ void LibraryDB::SortCheckOutBooks()
 
 void LibraryDB::ParseBookData()
 {
-
     QFile libFile("../LibraryManagement/Assets/BookList/master_5662.json");
 
     if(!libFile.open(QIODevice::ReadOnly))
@@ -618,6 +629,7 @@ void LibraryDB::ParseBookData()
 
 void LibraryDB::ParseUserData()
 {
+    qDebug() << "Parsing User Data";
     QFile regUserFile("../LibraryManagement/Assets/UserLists/regUsers.json");
 
     if(!regUserFile.open(QIODevice::ReadOnly))
@@ -700,6 +712,7 @@ void LibraryDB::ParseUserData()
 
     regUserFile.close();
 
+    qDebug() << "Parsing user logins";
     QFile userLogins("../LibraryManagement/Assets/UserLists/logins.json");
     if(!userLogins.open(QIODevice::ReadOnly))
     {
