@@ -61,6 +61,8 @@ public:
 
     void LoadSecondaryData();
 
+    int GetActiveUser();
+
 private:
     QVector<UserBase*> registeredUsers;
     QVector<Staff*> staffMembers;
@@ -76,6 +78,7 @@ private:
     void SortCheckOutBooks();
 
     int memberNumber = 00000000;
+    int loggedInUser;
 
     void ParseBookData();
     void ParseUserData();

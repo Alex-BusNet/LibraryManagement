@@ -9,10 +9,10 @@ public:
     Staff(QString name, QString addr, QString phoneNumber, QString username);
 
     bool CanCheckOutBook() override;
-    void ReturnBook(const Book &b) override ;
-    void CheckOutBook(const Book &b) override;
-    void LoadCheckOutData(int index, const Book &b) override;
-    void GetCheckedOutBooks(Book (&arr)[12]);
+    void ReturnBook() override ;
+    void CheckOutBook() override;
+    void LoadCheckOutData(int checkCount) override;
+    int GetCheckedOutBooks();
 
 
     template<typename T>
@@ -20,6 +20,7 @@ public:
 
 private:
     Book checkedOut[12];
+    int maxCheckout = 12, currentCheckOut;
 };
 
 #endif // STAFF_H

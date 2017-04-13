@@ -64,17 +64,22 @@ bool UserBase::CanCheckOutBook()
     return false;
 }
 
-void UserBase::ReturnBook(const Book &b)
+void UserBase::ReturnBook()
 {
 
 }
 
-void UserBase::CheckOutBook(const Book &b)
+void UserBase::CheckOutBook()
 {
 
 }
 
-void UserBase::LoadCheckOutData(int index, const Book &b)
+int UserBase::GetCheckedOutBooks()
+{
+
+}
+
+void UserBase::LoadCheckOutData(int checkCount)
 {
 
 }

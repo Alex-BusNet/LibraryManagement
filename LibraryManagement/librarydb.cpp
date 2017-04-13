@@ -116,8 +116,10 @@ int LibraryDB::LogIn(const QString username, const QString pass)
     QString storedPass = memberLogins.value(username);
 
     if(storedPass == pass)
+    {
+        loggedInUser = GetUser(username)->GetCardNumber();
         return Authenticate(GetUser(username));
-
+    }
     return -1;
 }
 
@@ -326,7 +328,10 @@ void LibraryDB::ReturnBook(long long ISBN)
                 }
             }
 
-            u->ReturnBook(*b);
+            u->ReturnBook();
+            b->updatedSinceLastSave = true;
+            checkedOutBooks.removeAll(br);
+            break;
         }
     }
 }
@@ -351,11 +356,11 @@ void LibraryDB::CheckOutBook(UserBase *u, Book *b, bool needsReminder, bool isRe
                 //Add the book to the user's checkedOut array
                 if(Staff::instanceof(u))
                 {
-                    static_cast<Staff*>(u)->CheckOutBook(*b);
+                    static_cast<Staff*>(u)->CheckOutBook();
                 }
                 else
                 {
-                    static_cast<User*>(u)->CheckOutBook(*b);
+                    static_cast<User*>(u)->CheckOutBook();
                 }
 
                 //Get the return date for the book
@@ -366,8 +371,11 @@ void LibraryDB::CheckOutBook(UserBase *u, Book *b, bool needsReminder, bool isRe
                     dueDate.addDays(7); // 1 week
 
                 checkedOutBooks.push_back(new BookReciept{u->GetCardNumber(), b->ISBN, dueDate, needsReminder});
+            }else{
+                QDate dueDate = QDate::currentDate();
+                reservedBooks.push_back(new BookReciept{u->GetCardNumber(), b->ISBN, dueDate, needsReminder});
             }
-
+            b->updatedSinceLastSave = true;
             SortCheckOutBooks();
             break;
         }
@@ -427,7 +435,7 @@ void LibraryDB::FulfillReservation(BookReciept *br)
     checkedOutBooks.push_back(br);
     reservedBooks.removeAll(br);
     UserBase* u = GetUser(br->userNo);
-    u->CheckOutBook(*(GetBook(br->ISBN)));
+    u->CheckOutBook();
 }
 
 QVector<BookReciept *> LibraryDB::GetAllReservations()
@@ -500,35 +508,10 @@ void LibraryDB::SaveData()
         obj["phonenumber"] = ub->GetPhoneNumber();
         obj["userlevel"] = Authenticate(ub);
 
-        int index = 0;
-        if(obj["userlevel"].toInt() > 0)
-        {
-            Book arr[12];
-            static_cast<Staff*>(ub)->GetCheckedOutBooks(arr);
-            QJsonArray bArr;
-            for(int i = 0; i < 12; i++)
-            {
-                index = masterList.indexOf(&arr[i]);
-                if(index == -1) {index = 0; }
-                bArr.push_back(index);
-            }
-
-            obj["checkedoutbooks"] = bArr;
-        }
+        if(Authenticate(ub) > 0)
+            obj["checkedoutbooks"] = static_cast<Staff*>(ub)->GetCheckedOutBooks();
         else
-        {
-            Book arr[6];
-            static_cast<User*>(ub)->GetCheckedOutBooks(arr);
-            QJsonArray bArr;
-            for(int i = 0; i < 6; i++)
-            {
-                index = masterList.indexOf(&arr[i]);
-                if(index == -1) {index = 0; }
-                bArr.push_back(index);
-            }
-
-            obj["checkedoutbooks"] = bArr;
-        }
+            obj["checkedoutbooks"] = static_cast<User*>(ub)->GetCheckedOutBooks();
 
         ruArr.push_back(obj);
     }
@@ -764,13 +747,7 @@ void LibraryDB::ParseUserData()
                     obj["phonenumber"].toString(),
                     obj["username"].toString());
             u->SetCardNumber(obj["cardnumber"].toInt());
-
-            QJsonArray bArr = obj["checkedoutbooks"].toArray();
-            for(int i = 0; i < bArr.size(); i++)
-            {
-                Book *b = GetBookAt(bArr[i].toInt());
-                u->LoadCheckOutData(i, *b);
-            }
+            u->LoadCheckOutData(obj["checkedoutbooks"].toInt());
 
             registeredUsers.push_back(u);
         }
@@ -782,16 +759,11 @@ void LibraryDB::ParseUserData()
                     obj["phonenumber"].toString(),
                     obj["username"].toString());
             s->SetCardNumber(obj["cardnumber"].toInt());
+            s->LoadCheckOutData(obj["checkedoutbooks"].toInt());
 
             registeredUsers.push_back(s);
             staffMembers.push_back(s);
 
-            QJsonArray bArr = obj["checkedoutbooks"].toArray();
-            for(int i = 0; i < bArr.size(); i++)
-            {
-                Book *b = GetBookAt(bArr[i].toInt());
-                s->LoadCheckOutData(i, *b);
-            }
         }
         else if(userLvl == 2) //Manager
         {
@@ -802,16 +774,10 @@ void LibraryDB::ParseUserData()
                     obj["username"].toString());
             m->SetCardNumber(obj["cardnumber"].toInt());
 
+            m->LoadCheckOutData(obj["checkedoutbooks"].toInt());
+
             registeredUsers.push_back(m);
             staffMembers.push_back(m);
-
-            QJsonArray bArr = obj["checkedoutbooks"].toArray();
-            for(int i = 0; i < bArr.size(); i++)
-            {
-                Book *b = GetBookAt(bArr[i].toInt());
-                m->LoadCheckOutData(i, *b);
-
-            }
         }
     }
 
@@ -855,7 +821,7 @@ void LibraryDB::ParseReserved()
 
     for(int i = 0; i < resArr.size(); i++)
     {
-        obj = resArr[1].toObject();
+        obj = resArr[i].toObject();
 
         br = new BookReciept
         {
@@ -927,6 +893,7 @@ void LibraryDB::ParseCheckedOut()
     }
 
     QByteArray rByte = checkedOutFile.readAll();
+    qDebug() << rByte;
     QJsonDocument doc = QJsonDocument::fromJson(rByte);
     QJsonArray resArr = doc.array();
     QJsonObject obj;
@@ -934,7 +901,7 @@ void LibraryDB::ParseCheckedOut()
 
     for(int i = 0; i < resArr.size(); i++)
     {
-        obj = resArr[1].toObject();
+        obj = resArr[i].toObject();
 
         br = new BookReciept
         {
@@ -944,9 +911,9 @@ void LibraryDB::ParseCheckedOut()
             obj["needsreminder"].toBool()
         };
 
-        reservedBooks.push_back(br);
+        checkedOutBooks.push_back(br);
     }
-
+    qDebug() << checkedOutBooks.size();
     checkedOutFile.flush();
     checkedOutFile.close();
 }
@@ -970,4 +937,10 @@ void LibraryDB::LoadSecondaryData()
     sync->addFuture(QtConcurrent::run(this, LibraryDB::ParseCheckedOut));
     sync->addFuture(QtConcurrent::run(this, LibraryDB::ParseOld));
     sync->addFuture(QtConcurrent::run(this, LibraryDB::ParseReserved));
+}
+
+int LibraryDB::GetActiveUser()
+{
+    qDebug() << loggedInUser;
+    return loggedInUser;
 }

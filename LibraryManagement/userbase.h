@@ -22,9 +22,10 @@ public:
     virtual int GetCardNumber() const;
 
     virtual bool CanCheckOutBook();
-    virtual void ReturnBook(const Book &b);
-    virtual void CheckOutBook(const Book &b);
-    virtual void LoadCheckOutData(int index, const Book &b);
+    virtual void ReturnBook();
+    virtual void CheckOutBook();
+    virtual int GetCheckedOutBooks();
+    virtual void LoadCheckOutData(int checkCount);
 
     bool operator==(const UserBase &other) { return (other.cardNumber == cardNumber); }
 

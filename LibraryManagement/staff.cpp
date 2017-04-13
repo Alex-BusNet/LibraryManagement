@@ -23,52 +23,53 @@ bool Staff::CanCheckOutBook()
     return true;
 }
 
-void Staff::ReturnBook(const Book &b)
+void Staff::ReturnBook()
 {
-    for(int i = 0; i < 12; i++)
-    {
-        if(checkedOut[i] == b)
-        {
-            int j = i + 1;
-            for(; j < 12; j++)
-            {
-                if(checkedOut[j].ISBN != 0)
-                    checkedOut[j - 1] = checkedOut[j];
-                else
-                    break;
-            }
+    if(maxCheckout > 0)
+        currentCheckOut--;
+//    for(int i = 0; i < 12; i++)
+//    {
+//        if(checkedOut[i] == b)
+//        {
+//            int j = i + 1;
+//            for(; j < 12; j++)
+//            {
+//                if(checkedOut[j].ISBN != 0)
+//                    checkedOut[j - 1] = checkedOut[j];
+//                else
+//                    break;
+//            }
 
-            checkedOut[j] = (*(LibraryDB::instance()->GetBookAt(0)));
-            break;
-        }
-    }
+//            checkedOut[j] = (*(LibraryDB::instance()->GetBookAt(0)));
+//            break;
+//        }
+//    }
 }
 
-void Staff::CheckOutBook(const Book &b)
+void Staff::CheckOutBook()
 {
-    for(int i = 0; i < 12; i++)
-    {
-        qDebug() << "checkedOut[" << i << "].ISBN == 0" << (checkedOut[i].ISBN == 0) << "ISBN:" << checkedOut[i].ISBN;
-        if(checkedOut[i].ISBN == 0)
-        {
-            qDebug() << "Checking out" << b.title << "to" << this->GetName() << "in slot" << i;
-            checkedOut[i] = b;
-            qDebug() << this->GetName() << "now has" << checkedOut[i].title << "new ISBN:" << checkedOut[i].ISBN;
-            break;
-        }
-    }
+    if(currentCheckOut != maxCheckout)
+        currentCheckOut++;
+//    for(int i = 0; i < 12; i++)
+//    {
+//        qDebug() << "checkedOut[" << i << "].ISBN == 0" << (checkedOut[i].ISBN == 0) << "ISBN:" << checkedOut[i].ISBN;
+//        if(checkedOut[i].ISBN == 0)
+//        {
+//            qDebug() << "Checking out" << b.title << "to" << this->GetName() << "in slot" << i;
+//            checkedOut[i] = b;
+//            qDebug() << this->GetName() << "now has" << checkedOut[i].title << "new ISBN:" << checkedOut[i].ISBN;
+//            break;
+//        }
+//    }
 
 }
 
-void Staff::LoadCheckOutData(int index, const Book &b)
+void Staff::LoadCheckOutData(int checkCount)
 {
-    checkedOut[index] = b;
+    currentCheckOut = checkCount;
 }
 
-void Staff::GetCheckedOutBooks(Book (&arr)[12])
+int Staff::GetCheckedOutBooks()
 {
-    for(int i = 0; i < 12; i++)
-    {
-        arr[i] = checkedOut[i];
-    }
+    return currentCheckOut;
 }

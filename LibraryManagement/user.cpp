@@ -28,18 +28,20 @@ bool User::CanCheckOutBook()
     return true;
 }
 
-void User::CheckOutBook(const Book &b)
+void User::CheckOutBook()
 {
-    for(int i = 0; i < 6; i++)
-    {
-        //Find the first open slot in the array
-        if(checkedOut[i] == 0)
-        {
-            //Add the book;
-            checkedOut[i] = b;
-            break;
-        }
-    }
+    if(maxCheckout != currentCheckOut)
+        currentCheckOut++;
+//    for(int i = 0; i < 6; i++)
+//    {
+//        //Find the first open slot in the array
+//        if(checkedOut[i] == 0)
+//        {
+//            //Add the book;
+//            checkedOut[i] = b;
+//            break;
+//        }
+//    }
 }
 
 /*
@@ -52,8 +54,11 @@ void User::CheckOutBook(const Book &b)
  * the book at the last indexed checked is set to NULL
  * regardless if it is already NULL.
  */
-void User::ReturnBook(const Book &b)
+void User::ReturnBook()
 {
+    if(currentCheckOut > 0)
+        currentCheckOut--;
+    /*
     for(int i = 0; i < 6; i++)
     {
         //Check if the book at this location is the book being returned
@@ -75,18 +80,16 @@ void User::ReturnBook(const Book &b)
             checkedOut[j] = Book{"", "", 0, QVector<int>{0}, false};
             break;
         }
-    }
+    }*/
 }
 
-void User::LoadCheckOutData(int index, const Book &b)
+int User::GetCheckedOutBooks()
 {
-    checkedOut[index] = b;
+    return currentCheckOut;
 }
 
-void User::GetCheckedOutBooks(Book (&arr)[6])
+void User::LoadCheckOutData(int checkCount)
 {
-    for(int i = 0; i < 6; i++)
-    {
-        arr[i] = checkedOut[i];
-    }
+    currentCheckOut = checkCount;
 }
+

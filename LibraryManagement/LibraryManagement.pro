@@ -18,7 +18,6 @@ SOURCES += main.cpp\
     user.cpp \
     staff.cpp \
     librarydb.cpp \
-    manager.cpp \
     userbase.cpp \
     useroptions.cpp \
     editbook.cpp \

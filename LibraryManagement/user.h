@@ -11,14 +11,14 @@ public:
     User(QString name, QString addr, QString phoneNumber, QString username);
 
     bool CanCheckOutBook() override;
-    void CheckOutBook(const Book &b) override;
-    void ReturnBook(const Book &b) override;
-    void LoadCheckOutData(int index, const Book &b) override;
-
-    void GetCheckedOutBooks(Book (&arr)[6]);
+    void CheckOutBook() override;
+    void ReturnBook() override;
+    int GetCheckedOutBooks() override;
+    void LoadCheckOutData(int checkCount) override;
 
 private:
     Book checkedOut[6];
+    int maxCheckout = 6, currentCheckOut;
 };
 
 #endif // USER_H

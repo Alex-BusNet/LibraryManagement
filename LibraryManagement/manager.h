@@ -6,14 +6,8 @@
 class Manager : public Staff
 {
 public:
-    Manager(QString name, QString addr, QString phoneNumber, QString username);
-
-    void AddBook(Book b);
-    void RemoveBook(Book b);
-
-    void AddUser(User u);
-    void RemoveUser(User u);
-
+    Manager(QString name, QString addr, QString phoneNumber, QString username) :
+        Staff(name, addr, phoneNumber, username){}
     template<typename T>
     static bool instanceof(const T *ptr) { return (dynamic_cast<const Manager*>(ptr) != nullptr); }
 };

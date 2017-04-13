@@ -139,7 +139,7 @@ void UserOptions::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
     }
 }
 
-void UserOptions::on_pushButton_clicked()
+void UserOptions::on_searchButton_clicked()
 {
     int search = ui->searchType->currentIndex();
     QVector<Book*> results;
@@ -249,10 +249,12 @@ void UserOptions::on_checkedOutListButton_clicked()
     QTableWidgetItem* isbn;
     QTableWidgetItem* duedate;
     QTableWidgetItem* needsreminder;
+    qDebug() << checkoutList.size();
+    tw->setRowCount(checkoutList.size());
 
     foreach(BookReciept *br, checkoutList)
     {
-        userNo = new QTableWidgetItem(QString(br->userNo));
+        userNo = new QTableWidgetItem(QString::number(br->userNo));
         isbn = new QTableWidgetItem(QString::number(br->ISBN));
         duedate = new QTableWidgetItem(br->dateDue.toString());
         needsreminder = new QTableWidgetItem(br->needsReminder);
@@ -274,7 +276,14 @@ void UserOptions::on_checkedOutListButton_clicked()
 
 void UserOptions::on_editUserButton_clicked()
 {
+    if(eu != NULL)
+    {
+        delete eu;
+    }
 
+//    eu = new editUser(0, ui->userInfoTable->currentRow());
+    //Load user info to dialog
+    eu->show();
 }
 
 void UserOptions::on_userInfoTable_itemActivated(QTableWidgetItem *item)
@@ -285,10 +294,36 @@ void UserOptions::on_userInfoTable_itemActivated(QTableWidgetItem *item)
 void UserOptions::on_userInfoTable_cellDoubleClicked(int row, int column)
 {
     qDebug() << "Edit User diag";
+
     //Show Edit user dialog
 }
 
 void UserOptions::on_userInfoTable_cellChanged(int row, int column)
 {
 
+}
+
+void UserOptions::on_tableWidget_itemPressed(QTableWidgetItem *item)
+{
+    qDebug() << "Item at" << item->column() << item->row() << "pressed";
+    ui->tableWidget->selectRow(item->row());
+}
+
+void UserOptions::on_borrowBookButton_clicked()
+{
+    LibraryDB::instance()->CheckOutBook(LibraryDB::instance()->GetUser(ui->userIdLineEdit->text().toInt()),
+                                        LibraryDB::instance()->GetBook(ui->isbnLineEdit->text().toLongLong()),
+                                        false,false);
+}
+
+void UserOptions::on_returnBookButton_clicked()
+{
+    LibraryDB::instance()->ReturnBook(ui->isbnLineEdit->text().toLongLong());
+}
+
+void UserOptions::on_reserveBookButton_clicked()
+{
+    LibraryDB::instance()->CheckOutBook(LibraryDB::instance()->GetUser(LibraryDB::instance()->GetActiveUser()),
+                                        LibraryDB::instance()->GetBook(ui->tableWidget->currentItem()->text().toLongLong()),
+                                        false,true);
 }
