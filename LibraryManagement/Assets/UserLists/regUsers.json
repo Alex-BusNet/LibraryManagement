@@ -8,7 +8,7 @@
         "userlevel": 2,
         "username": "arport"
     },
-	    {
+    {
         "address": "67890 Peachtree Ave",
         "cardnumber": 2,
         "checkedoutbooks": 0,
@@ -34,5 +34,14 @@
         "phonenumber": " 2222222222",
         "userlevel": 1,
         "username": "port"
+    },
+    {
+        "address": " 1234098",
+        "cardnumber": 5,
+        "checkedoutbooks": 0,
+        "name": " Paul",
+        "phonenumber": "11111111111",
+        "userlevel": 0,
+        "username": "pjack"
     }
 ]

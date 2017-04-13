@@ -3,6 +3,7 @@
 #include "librarydb.h"
 
 #include <QDialog>
+#include <QMessageBox>
 
 UserOptions::UserOptions(QWidget *parent, int userLevel) :
     QWidget(parent),
@@ -19,6 +20,8 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
     ui->tableWidget->setHorizontalHeaderLabels(headers);
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->userInfoTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->userInfoTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     int i = 0;
     this->setLayout(ui->MainLayout);
@@ -69,6 +72,11 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
         ui->userTableLabel->setVisible(false);
         ui->reservedListButton->setVisible(false);
         ui->checkedOutListButton->setVisible(false);
+        ui->addBookButton->setVisible(false);
+        ui->removeBookButton->setVisible(false);
+        ui->editBookButton->setVisible(false);
+        ui->frame->setVisible(false);
+        ui->reminderCB->setVisible(false);
         ui->managerSpace->changeSize(10, 10, QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
     else if(userLevel == 1)
@@ -296,7 +304,30 @@ void UserOptions::on_editUserButton_clicked()
 
     UserBase *ref = LibraryDB::instance()->GetUser(ui->userInfoTable->currentItem()->text().toInt());
     eu = new editUser(0, ref->GetName(), ref->GetUsername(), LibraryDB::instance()->GetPass(ref->GetUsername()), ref->GetCardNumber(), ref->GetAddress(), ref->GetPhoneNumber(), false);
-    eu->show();
+    eu->exec();
+    if(activeUserLevel == 2)
+    {
+        int userRow = 0;
+        foreach(UserBase* ub, LibraryDB::instance()->GetAllUsers())
+        {
+            QStringList uheader = {"ID", "Name", "Access Level" };
+            ui->userInfoTable->setColumnCount(3);
+            ui->userInfoTable->setRowCount(LibraryDB::instance()->GetNumberOfUsers());
+            ui->userInfoTable->setHorizontalHeaderLabels(uheader);
+
+            userID = new QTableWidgetItem(QString::number(ub->GetCardNumber()));
+            userName = new QTableWidgetItem(ub->GetName());
+            userAccess = new QTableWidgetItem(QString::number(LibraryDB::instance()->Authenticate(ub)));
+
+            ui->userInfoTable->setItem(userRow, 0, userID);
+            ui->userInfoTable->setItem(userRow, 1, userName);
+            ui->userInfoTable->setItem(userRow, 2, userAccess);
+
+            userRow++;
+        }
+
+        ui->editUserButton->setEnabled(false);
+    }
 }
 
 void UserOptions::on_userInfoTable_itemActivated(QTableWidgetItem *item)
@@ -304,32 +335,9 @@ void UserOptions::on_userInfoTable_itemActivated(QTableWidgetItem *item)
     ui->editUserButton->setEnabled(true);
 }
 
-void UserOptions::on_userInfoTable_cellDoubleClicked(int row, int column)
+void UserOptions::on_tableWidget_itemSelected(QTableWidgetItem *item)
 {
-    if(eu != NULL)
-    {
-        if(eu->isVisible())
-        {
-            eu->hide();
-        }
-
-        delete eu;
-    }
-
-    UserBase *ref = LibraryDB::instance()->GetUser(ui->userInfoTable->currentItem()->text().toInt());
-    eu = new editUser(NULL, ref->GetName(), ref->GetUsername(), LibraryDB::instance()->GetPass(ref->GetUsername()), ref->GetCardNumber(), ref->GetAddress(), ref->GetPhoneNumber(), false);
-    eu->show();
-}
-
-void UserOptions::on_userInfoTable_cellChanged(int row, int column)
-{
-
-}
-
-void UserOptions::on_tableWidget_itemPressed(QTableWidgetItem *item)
-{
-    qDebug() << "Item at" << item->column() << item->row() << "pressed";
-//    ui->tableWidget->selectRow(item->row());
+    ui->isbnLineEdit->setText(ui->tableWidget->itemAt(3, ui->tableWidget->currentRow())->text());
 }
 
 void UserOptions::on_borrowBookButton_clicked()
@@ -358,7 +366,6 @@ void UserOptions::on_userInfoTable_cellPressed(int row, int column)
 
 void UserOptions::on_addUserButton_clicked()
 {
-
     if(eu != NULL)
     {
         if(eu->isVisible())
@@ -370,12 +377,38 @@ void UserOptions::on_addUserButton_clicked()
     }
 
     eu = new editUser(0, " ", " ", " ", 0, " ", " ", true);
-    eu->show();
+    eu->exec();
+    if(activeUserLevel == 2)
+    {
+        int userRow = 0;
+        foreach(UserBase* ub, LibraryDB::instance()->GetAllUsers())
+        {
+            QStringList uheader = {"ID", "Name", "Access Level" };
+            ui->userInfoTable->setColumnCount(3);
+            ui->userInfoTable->setRowCount(LibraryDB::instance()->GetNumberOfUsers());
+            ui->userInfoTable->setHorizontalHeaderLabels(uheader);
+
+            userID = new QTableWidgetItem(QString::number(ub->GetCardNumber()));
+            userName = new QTableWidgetItem(ub->GetName());
+            userAccess = new QTableWidgetItem(QString::number(LibraryDB::instance()->Authenticate(ub)));
+
+            ui->userInfoTable->setItem(userRow, 0, userID);
+            ui->userInfoTable->setItem(userRow, 1, userName);
+            ui->userInfoTable->setItem(userRow, 2, userAccess);
+
+            userRow++;
+        }
+
+        ui->editUserButton->setEnabled(false);
+    }
 }
 
 void UserOptions::on_removeUserButton_clicked()
 {
-    LibraryDB::instance()->RemoveUser(ui->userInfoTable->itemAt(0, ui->userInfoTable->currentRow())->text().toInt());
+    QMessageBox *mbox = new QMessageBox();
+    mbox->setText("Are You sure?");
+    mbox->exec();
+    connect(mbox, SIGNAL(accepted()), this, SLOT(RemoveUser()));
 }
 
 void UserOptions::on_addBookButton_clicked()
@@ -391,7 +424,8 @@ void UserOptions::on_addBookButton_clicked()
     }
 
     eb = new editBook();
-    eb->show();
+    eb->exec();
+
 }
 
 void UserOptions::on_editBookButton_clicked()
@@ -408,10 +442,28 @@ void UserOptions::on_editBookButton_clicked()
 
     Book *ref = LibraryDB::instance()->GetBook(ui->tableWidget->itemAt(2, ui->tableWidget->currentRow())->text().toLongLong());
     eb = new editBook(0, ref->title, ref->author, QString::number(ref->ISBN), ref->copiesAvailable.size(), ref->publisher, ref->publishYear, false);
-    eb->show();
+    eb->exec();
 }
 
 void UserOptions::on_removeBookButton_clicked()
 {
+    QMessageBox *mbox = new QMessageBox();
+    mbox->setText("Are You sure?");
+    mbox->exec();
+    connect(mbox, SIGNAL(accepted()), this, SLOT(RemoveUser()));
+}
+
+void UserOptions::RemoveUser()
+{
+    LibraryDB::instance()->RemoveUser(ui->userInfoTable->itemAt(0, ui->userInfoTable->currentRow())->text().toInt());
+}
+
+void UserOptions::RemoveBook()
+{
     LibraryDB::instance()->RemoveBook(ui->tableWidget->itemAt(2, ui->tableWidget->currentRow())->text().toLongLong());
+}
+
+void UserOptions::on_tableWidget_itemChanged(QTableWidgetItem *item)
+{
+     ui->isbnLineEdit->setText(ui->tableWidget->itemAt(3, ui->tableWidget->currentRow())->text());
 }

@@ -13,7 +13,10 @@ editUser::editUser(QWidget *parent, QString name, QString username, QString pass
     ui->passwordLE->setText(pass);
 
     if(newUser)
+    {
+        ui->label_3->setVisible(false);
         ui->cardNumberLE->setVisible(false);
+    }
     else
         ui->cardNumberLE->setText(QString::number(cardnumber));
 
