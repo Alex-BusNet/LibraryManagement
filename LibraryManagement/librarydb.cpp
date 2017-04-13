@@ -38,16 +38,20 @@ bool LibraryDB::AddUser(UserBase *u, QString pass)
     return true;
 }
 
-void LibraryDB::RemoveUser(int index)
+void LibraryDB::RemoveUser(int userNumber)
 {
-    if(index < registeredUsers.size())
+    foreach(UserBase *ub, registeredUsers)
     {
-        if(Staff::instanceof(registeredUsers.at(index)))
+        if(ub->GetCardNumber() == userNumber)
         {
-            RemoveStaff(static_cast<Staff*>(registeredUsers.at(index)));
-        }
+            if(Staff::instanceof(ub))
+            {
+                RemoveStaff(static_cast<Staff*>(ub));
+            }
 
-        registeredUsers.removeAt(index);
+            registeredUsers.removeAll(ub);
+            break;
+        }
     }
 }
 

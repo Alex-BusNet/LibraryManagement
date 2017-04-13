@@ -8,13 +8,13 @@
         "userlevel": 2,
         "username": "arport"
     },
-    {
-        "address": "12345 Peachtree Ave",
+	    {
+        "address": "67890 Peachtree Ave",
         "cardnumber": 2,
         "checkedoutbooks": 0,
         "name": "Sparta",
-        "phonenumber": "4444444444",
-        "userlevel": 0,
+        "phonenumber": "3333333333",
+        "userlevel": 1,
         "username": "sparta"
     },
     {
@@ -25,5 +25,14 @@
         "phonenumber": "3333333333",
         "userlevel": 1,
         "username": "protoplasm"
+    },
+    {
+        "address": " 1234",
+        "cardnumber": 4,
+        "checkedoutbooks": -65223,
+        "name": " Alex P",
+        "phonenumber": " 2222222222",
+        "userlevel": 1,
+        "username": "port"
     }
 ]

@@ -19,7 +19,7 @@ public:
     static LibraryDB *instance();
 
     bool AddUser(UserBase *u, QString pass);
-    void RemoveUser(int index);
+    void RemoveUser(int userNumber);
     QVector<UserBase*> GetAllUsers();
 
     UserBase* GetUser(QString username);

@@ -1,26 +1,2 @@
 [
-    {
-        "duedate": "Wed Apr 12 2017",
-        "isbn": "380794721",
-        "needsreminder": false,
-        "userno": 3
-    },
-    {
-        "duedate": "Wed Apr 12 2017",
-        "isbn": "525447105",
-        "needsreminder": false,
-        "userno": 3
-    },
-    {
-        "duedate": "Wed Apr 12 2017",
-        "isbn": "395083931",
-        "needsreminder": false,
-        "userno": 3
-    },
-    {
-        "duedate": "Wed Apr 12 2017",
-        "isbn": "883965275",
-        "needsreminder": false,
-        "userno": 3
-    }
 ]
