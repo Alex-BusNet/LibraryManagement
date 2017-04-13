@@ -30,8 +30,6 @@ void MainWindow::on_login_clicked()
     int loadUI = LibraryDB::instance()->LogIn(un, pw);
     if(loadUI >= 0)
     {
-        qDebug() << "User has level access:" << loadUI;
-
         if(uo != NULL)
         {
             delete uo;

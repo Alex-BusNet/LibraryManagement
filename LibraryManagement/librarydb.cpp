@@ -42,6 +42,11 @@ void LibraryDB::RemoveUser(int index)
 {
     if(index < registeredUsers.size())
     {
+        if(Staff::instanceof(registeredUsers.at(index)))
+        {
+            RemoveStaff(static_cast<Staff*>(registeredUsers.at(index)));
+        }
+
         registeredUsers.removeAt(index);
     }
 }
@@ -78,6 +83,28 @@ int LibraryDB::GetNumberOfUsers()
     return registeredUsers.size();
 }
 
+void LibraryDB::UpdateUser(int userNo, UserBase *ub, bool isStaff)
+{
+    if(isStaff)
+    {
+        foreach(Staff *s, staffMembers)
+        {
+            if(s->GetCardNumber() == userNo)
+            {
+                s = static_cast<Staff*>(ub);
+                break;
+            }
+        }
+
+        registeredUsers.replace(userNo, static_cast<Staff*>(ub));
+    }
+    else
+    {
+        registeredUsers.replace(userNo, static_cast<User*>(ub));
+    }
+
+}
+
 bool LibraryDB::AddStaff(Staff* s)
 {
     if(registeredUsers.contains(s))
@@ -94,12 +121,9 @@ bool LibraryDB::AddStaff(Staff* s)
  * index is found by taking the row number from the QTableWidget
  * in the manager's GUI.
  */
-void LibraryDB::RemoveStaff(int index)
+void LibraryDB::RemoveStaff(Staff *s)
 {
-    if(index < staffMembers.size())
-    {
-        staffMembers.removeAt(index);
-    }
+    staffMembers.removeAll(s);
 }
 
 /*
@@ -163,14 +187,17 @@ void LibraryDB::AddBook(Book *b)
  * index is found by taking the row number from the QTableWidget
  * in the manager's GUI.
  */
-void LibraryDB::RemoveBook(int index)
+void LibraryDB::RemoveBook(long long ISBN)
 {
-    if(index < masterList.size())
+    foreach(Book* b, masterList)
     {
+        if(b->ISBN == ISBN)
+        {
         //Keep a copy of any removed books in case
         // book was accidentally removed
-        oldBooks.push_back(masterList.at(index));
-        masterList.removeAt(index);
+        oldBooks.push_back(b);
+        masterList.removeAll(b);
+        }
     }
 }
 
@@ -181,11 +208,15 @@ void LibraryDB::RemoveBook(int index)
  * index is found by taking the row number from the QTableWidget
  * in the manager's GUI.
  */
-void LibraryDB::EditBook(int index, Book *editedBook)
+void LibraryDB::EditBook(long long isbn, Book *editedBook)
 {
-    if(index < masterList.size())
+    foreach(Book *b, masterList)
     {
-        masterList[index] = editedBook;
+        if(b->ISBN == isbn)
+        {
+            b = editedBook;
+            break;
+        }
     }
 }
 
@@ -669,7 +700,6 @@ void LibraryDB::ParseBookData()
     masterArr = doc.array();
     Book *b;
 
-    qDebug() << "masterList size:" << masterArr.size();
     for(int i = 1; i < masterArr.size(); i++)
     {
         QJsonObject obj = masterArr.at(i).toObject();
@@ -893,7 +923,6 @@ void LibraryDB::ParseCheckedOut()
     }
 
     QByteArray rByte = checkedOutFile.readAll();
-    qDebug() << rByte;
     QJsonDocument doc = QJsonDocument::fromJson(rByte);
     QJsonArray resArr = doc.array();
     QJsonObject obj;
@@ -913,7 +942,6 @@ void LibraryDB::ParseCheckedOut()
 
         checkedOutBooks.push_back(br);
     }
-    qDebug() << checkedOutBooks.size();
     checkedOutFile.flush();
     checkedOutFile.close();
 }
@@ -927,6 +955,7 @@ void LibraryDB::ParseDBJson()
     masterList.push_back(new Book{"Title", "Author", 0, QVector<int>{-1,-1,-1}, false, "Publisher", 0});
     ParseBookData();
     ParseUserData();
+    memberNumber = registeredUsers.size();
 
     qDebug() << "Parse Complete";
 }
@@ -943,4 +972,9 @@ int LibraryDB::GetActiveUser()
 {
     qDebug() << loggedInUser;
     return loggedInUser;
+}
+
+QString LibraryDB::GetPass(QString username)
+{
+    return memberLogins.value(username);
 }

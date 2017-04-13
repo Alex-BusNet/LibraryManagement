@@ -12,7 +12,7 @@ class editUser : public QDialog
     Q_OBJECT
 
 public:
-    explicit editUser(QWidget *parent = 0, QString name, QString username, int cardnumber, QString address, QString phonenumber);
+    explicit editUser(QWidget *parent = 0, QString name = " ", QString username = " ", QString pass = " ", int cardnumber = 0, QString address = " ", QString phonenumber = " ", bool newUser = true);
     ~editUser();
 
 private slots:
@@ -20,6 +20,7 @@ private slots:
 
 private:
     Ui::editUser *ui;
+    bool newUser;
 };
 
 #endif // EDITUSER_H

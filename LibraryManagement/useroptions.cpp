@@ -12,10 +12,13 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
     int row = 0;
     ui->tableWidget->setColumnCount(7);
     ui->tableWidget->setRowCount(5662);
-
+    eu = NULL;
+    eb = NULL;
     QStringList headers = {"Title", "Author", "ISBN", "Copies Available", "Check-out period", "Publisher" , "Year Published"};
 
     ui->tableWidget->setHorizontalHeaderLabels(headers);
+    ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->userInfoTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     int i = 0;
     this->setLayout(ui->MainLayout);
@@ -156,7 +159,7 @@ void UserOptions::on_searchButton_clicked()
         results = LibraryDB::instance()->GetBooks("", ui->searchBar->text());
         break;
     case 2: // ISBN
-        results.push_back(LibraryDB::instance()->GetBook(ui->searchBar->text().toInt()));
+        results.push_back(LibraryDB::instance()->GetBook(ui->searchBar->text().toLongLong()));
         break;
     default: // Get all books
         results = LibraryDB::instance()->GetAllBooks();
@@ -202,6 +205,7 @@ void UserOptions::on_reservedListButton_clicked()
     QStringList twheader = {"User Number", "ISBN", "Pickup Date" , "Needs Reminder"};
     tw->setHorizontalHeaderLabels(twheader);
     tw->setSortingEnabled(true);
+    tw->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     QVector<BookReciept*> reservationList = LibraryDB::instance()->GetAllReservations();
     int row = 0;
@@ -209,13 +213,14 @@ void UserOptions::on_reservedListButton_clicked()
     QTableWidgetItem* isbn;
     QTableWidgetItem* duedate;
     QTableWidgetItem* needsreminder;
+    tw->setRowCount(reservationList.size());
 
     foreach(BookReciept *br, reservationList)
     {
-        userNo = new QTableWidgetItem(QString(br->userNo));
+        userNo = new QTableWidgetItem(QString::number(br->userNo));
         isbn = new QTableWidgetItem(QString::number(br->ISBN));
         duedate = new QTableWidgetItem(br->dateDue.toString());
-        needsreminder = new QTableWidgetItem(br->needsReminder);
+        needsreminder = new QTableWidgetItem((br->needsReminder ? "True" : "False"));
 
         tw->setItem(row, 0, userNo);
         tw->setItem(row, 1, isbn);
@@ -223,12 +228,13 @@ void UserOptions::on_reservedListButton_clicked()
         tw->setItem(row, 3, needsreminder);
 
         row++;
-
     }
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(tw);
     reservedDisplay->setLayout(layout);
+    reservedDisplay->setFixedWidth(450);
+    reservedDisplay->setWindowTitle("Reserved Books");
 
     reservedDisplay->show();
 }
@@ -242,6 +248,7 @@ void UserOptions::on_checkedOutListButton_clicked()
     QStringList twheader = {"User Number", "ISBN", "Due Date" , "Needs Reminder"};
     tw->setHorizontalHeaderLabels(twheader);
     tw->setSortingEnabled(true);
+    tw->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     QVector<BookReciept*> checkoutList = LibraryDB::instance()->GetAllCheckedOutBooks();
     int row = 0;
@@ -257,7 +264,7 @@ void UserOptions::on_checkedOutListButton_clicked()
         userNo = new QTableWidgetItem(QString::number(br->userNo));
         isbn = new QTableWidgetItem(QString::number(br->ISBN));
         duedate = new QTableWidgetItem(br->dateDue.toString());
-        needsreminder = new QTableWidgetItem(br->needsReminder);
+        needsreminder = new QTableWidgetItem((br->needsReminder ? "True" : "False"));
 
         tw->setItem(row, 0, userNo);
         tw->setItem(row, 1, isbn);
@@ -270,6 +277,7 @@ void UserOptions::on_checkedOutListButton_clicked()
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(tw);
     checkedoutDisplay->setLayout(layout);
+    checkedoutDisplay->setFixedWidth(450);
     checkedoutDisplay->setWindowTitle("Checked out Books");
     checkedoutDisplay->show();
 }
@@ -278,11 +286,16 @@ void UserOptions::on_editUserButton_clicked()
 {
     if(eu != NULL)
     {
+        if(eu->isVisible())
+        {
+            eu->hide();
+        }
+
         delete eu;
     }
 
-//    eu = new editUser(0, ui->userInfoTable->currentRow());
-    //Load user info to dialog
+    UserBase *ref = LibraryDB::instance()->GetUser(ui->userInfoTable->currentItem()->text().toInt());
+    eu = new editUser(0, ref->GetName(), ref->GetUsername(), LibraryDB::instance()->GetPass(ref->GetUsername()), ref->GetCardNumber(), ref->GetAddress(), ref->GetPhoneNumber(), false);
     eu->show();
 }
 
@@ -293,9 +306,19 @@ void UserOptions::on_userInfoTable_itemActivated(QTableWidgetItem *item)
 
 void UserOptions::on_userInfoTable_cellDoubleClicked(int row, int column)
 {
-    qDebug() << "Edit User diag";
+    if(eu != NULL)
+    {
+        if(eu->isVisible())
+        {
+            eu->hide();
+        }
 
-    //Show Edit user dialog
+        delete eu;
+    }
+
+    UserBase *ref = LibraryDB::instance()->GetUser(ui->userInfoTable->currentItem()->text().toInt());
+    eu = new editUser(NULL, ref->GetName(), ref->GetUsername(), LibraryDB::instance()->GetPass(ref->GetUsername()), ref->GetCardNumber(), ref->GetAddress(), ref->GetPhoneNumber(), false);
+    eu->show();
 }
 
 void UserOptions::on_userInfoTable_cellChanged(int row, int column)
@@ -306,7 +329,7 @@ void UserOptions::on_userInfoTable_cellChanged(int row, int column)
 void UserOptions::on_tableWidget_itemPressed(QTableWidgetItem *item)
 {
     qDebug() << "Item at" << item->column() << item->row() << "pressed";
-    ui->tableWidget->selectRow(item->row());
+//    ui->tableWidget->selectRow(item->row());
 }
 
 void UserOptions::on_borrowBookButton_clicked()
@@ -326,4 +349,69 @@ void UserOptions::on_reserveBookButton_clicked()
     LibraryDB::instance()->CheckOutBook(LibraryDB::instance()->GetUser(LibraryDB::instance()->GetActiveUser()),
                                         LibraryDB::instance()->GetBook(ui->tableWidget->currentItem()->text().toLongLong()),
                                         false,true);
+}
+
+void UserOptions::on_userInfoTable_cellPressed(int row, int column)
+{
+    ui->editUserButton->setEnabled(true);
+}
+
+void UserOptions::on_addUserButton_clicked()
+{
+
+    if(eu != NULL)
+    {
+        if(eu->isVisible())
+        {
+            eu->close();
+        }
+
+        delete eu;
+    }
+
+    eu = new editUser(0, " ", " ", " ", 0, " ", " ", true);
+    eu->show();
+}
+
+void UserOptions::on_removeUserButton_clicked()
+{
+    LibraryDB::instance()->RemoveUser(ui->userInfoTable->itemAt(0, ui->userInfoTable->currentRow())->text().toInt());
+}
+
+void UserOptions::on_addBookButton_clicked()
+{
+    if(eb != NULL)
+    {
+        if(eb->isVisible())
+        {
+            eb->close();
+        }
+
+        delete eb;
+    }
+
+    eb = new editBook();
+    eb->show();
+}
+
+void UserOptions::on_editBookButton_clicked()
+{
+    if(eb != NULL)
+    {
+        if(eb->isVisible())
+        {
+            eb->close();
+        }
+
+        delete eb;
+    }
+
+    Book *ref = LibraryDB::instance()->GetBook(ui->tableWidget->itemAt(2, ui->tableWidget->currentRow())->text().toLongLong());
+    eb = new editBook(0, ref->title, ref->author, QString::number(ref->ISBN), ref->copiesAvailable.size(), ref->publisher, ref->publishYear, false);
+    eb->show();
+}
+
+void UserOptions::on_removeBookButton_clicked()
+{
+    LibraryDB::instance()->RemoveBook(ui->tableWidget->itemAt(2, ui->tableWidget->currentRow())->text().toLongLong());
 }

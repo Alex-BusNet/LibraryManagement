@@ -21,19 +21,21 @@ public:
     bool AddUser(UserBase *u, QString pass);
     void RemoveUser(int index);
     QVector<UserBase*> GetAllUsers();
+
     UserBase* GetUser(QString username);
     UserBase* GetUser(int userNumber);
     int GetNumberOfUsers();
-    
+    void UpdateUser(int userNo, UserBase *ub, bool isStaff);
+
     bool AddStaff(Staff* s);
-    void RemoveStaff(int index);
+    void RemoveStaff(Staff *s);
 
     int LogIn(const QString username, const QString pass);
     int Authenticate(UserBase *s);
 
     void AddBook(Book *b);
-    void RemoveBook(int index);
-    void EditBook(int index, Book *editedBook);
+    void RemoveBook(long long ISBN);
+    void EditBook(long long isbn, Book *editedBook);
 
     QVector<Book *> GetBooks(const QString title = " ", const QString author = " ");
     Book* GetBookAt(int index);
@@ -62,6 +64,7 @@ public:
     void LoadSecondaryData();
 
     int GetActiveUser();
+    QString GetPass(QString username);
 
 private:
     QVector<UserBase*> registeredUsers;

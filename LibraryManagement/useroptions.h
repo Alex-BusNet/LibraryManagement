@@ -1,6 +1,7 @@
 #ifndef USEROPTIONS_H
 #define USEROPTIONS_H
 
+#include "editbook.h"
 #include "edituser.h"
 
 #include <QWidget>
@@ -48,11 +49,24 @@ private slots:
 
     void on_reserveBookButton_clicked();
 
+    void on_userInfoTable_cellPressed(int row, int column);
+
+    void on_addUserButton_clicked();
+
+    void on_removeUserButton_clicked();
+
+    void on_addBookButton_clicked();
+
+    void on_editBookButton_clicked();
+
+    void on_removeBookButton_clicked();
+
 private:
     Ui::UserOptions *ui;
     int activeUserLevel;
 
     editUser* eu;
+    editBook* eb;
 
     QTableWidgetItem *title;
     QTableWidgetItem *author;
