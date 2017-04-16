@@ -9,7 +9,7 @@ struct Book
 {
     QString title;
     QString author;
-    long long ISBN;
+    QString ISBN;
     QVector<int> copiesAvailable;
     bool longTerm;
     QString publisher;
@@ -35,17 +35,17 @@ struct Book
         this->longTerm = other.longTerm;
     }
 
-    bool operator ==(const long long& i)
+    bool operator ==(const QString& i)
     {
         return (ISBN == i);
     }
 
-    void operator =(const long long& i)
+    void operator =(const QString& i)
     {
         this->ISBN = i;
     }
 
-    bool operator !=(const long long& i)
+    bool operator !=(const QString& i)
     {
         return (ISBN != i);
     }
@@ -54,7 +54,7 @@ struct Book
 struct BookReciept
 {
     int userNo;
-    long long ISBN;
+    QString ISBN;
     QDate dateDue;
     bool needsReminder;
 };

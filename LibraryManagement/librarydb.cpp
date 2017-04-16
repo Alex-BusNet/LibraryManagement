@@ -191,7 +191,7 @@ void LibraryDB::AddBook(Book *b)
  * index is found by taking the row number from the QTableWidget
  * in the manager's GUI.
  */
-void LibraryDB::RemoveBook(long long ISBN)
+void LibraryDB::RemoveBook(QString ISBN)
 {
     foreach(Book* b, masterList)
     {
@@ -212,7 +212,7 @@ void LibraryDB::RemoveBook(long long ISBN)
  * index is found by taking the row number from the QTableWidget
  * in the manager's GUI.
  */
-void LibraryDB::EditBook(long long isbn, Book *editedBook)
+void LibraryDB::EditBook(QString isbn, Book *editedBook)
 {
     foreach(Book *b, masterList)
     {
@@ -224,38 +224,42 @@ void LibraryDB::EditBook(long long isbn, Book *editedBook)
     }
 }
 
-QVector<Book*> LibraryDB::GetBooks(const QString title, const QString author)
+QVector<Book*> LibraryDB::GetBooks(const QString search, SearchType type)
 {
     QVector<Book*> results = {};
-    if(title.trimmed() == "")
+
+    switch(type)
     {
-        if(author.trimmed() != "")
+    case TITLE:
+        foreach(Book* b, masterList)
         {
-            foreach(Book* b, masterList)
+            if(b->title.contains(search, Qt::CaseInsensitive))
             {
-                if(b->author.contains(author, Qt::CaseInsensitive))
-                {
-                    results.push_back(b);
-                }
+                results.push_back(b);
             }
         }
-    }
-    else if(author.trimmed() == "")
-    {
-        if(title.trimmed() != "")
+        break;
+    case AUTHOR:
+        foreach(Book *b, masterList)
         {
-            foreach(Book *b, masterList)
+            if(b->author.contains(search, Qt::CaseInsensitive))
             {
-                if(b->title.contains(title, Qt::CaseInsensitive))
-                {
-                    results.push_back(b);
-                }
+                results.push_back(b);
             }
         }
-    }
-    else
-    {
-        results.push_back(GetBook(title, author));
+        break;
+    case ISBN:
+        foreach(Book *b, masterList)
+        {
+            if(b->ISBN == search)
+            {
+                results.push_back(b);
+            }
+        }
+        break;
+    default:
+        results.push_back(masterList.at(0));
+        break;
     }
 
     return results;
@@ -266,7 +270,7 @@ Book *LibraryDB::GetBookAt(int index)
     return masterList.at(index);
 }
 
-Book* LibraryDB::GetBook(const long long ISBN)
+Book* LibraryDB::GetBook(const QString ISBN)
 {
     foreach(Book* b, masterList)
     {
@@ -293,12 +297,12 @@ QVector<Book*> LibraryDB::GetAllBooks()
     return this->masterList;
 }
 
-int LibraryDB::GetCopiesOfBook(const long long ISBN)
+int LibraryDB::GetCopiesOfBook(const QString ISBN)
 {
     Book* b = GetBook(ISBN);
     int count = 0;
 
-    if(b->ISBN != 0)
+    if(b->ISBN.toInt() != 0)
     {
         foreach(int i, b->copiesAvailable)
         {
@@ -315,23 +319,11 @@ int LibraryDB::GetCopiesOfBook(const long long ISBN)
 int LibraryDB::GetCopiesOfBook(const QString title, const QString author)
 {
     Book* b = GetBook(title, author);
-    int count = 0;
 
-    if(b->ISBN != 0)
-    {
-        foreach(int i, b->copiesAvailable)
-        {
-            if(i == -1)
-            {
-                count++;
-            }
-        }
-    }
-
-    return count;
+    return GetCopiesOfBook(b->ISBN);
 }
 
-void LibraryDB::ReturnBook(long long ISBN)
+void LibraryDB::ReturnBook(QString ISBN)
 {
     foreach(BookReciept *br, checkedOutBooks)
     {
@@ -497,7 +489,7 @@ void LibraryDB::SaveData()
         if(masterList.at(i)->updatedSinceLastSave)
         {
             QJsonObject obj;
-            obj["isbn"] = QString::number(masterList.at(i)->ISBN);
+            obj["isbn"] = masterList.at(i)->ISBN;
             obj["book-title"] = masterList.at(i)->title;
             obj["book-author"] = masterList.at(i)->author;
             obj["longterm"] = masterList.at(i)->longTerm;
@@ -592,7 +584,7 @@ void LibraryDB::SaveData()
     {
         QJsonObject obj;
         obj["userno"] = br->userNo;
-        obj["isbn"] = QString::number(br->ISBN);
+        obj["isbn"] = br->ISBN;
         obj["duedate"] = br->dateDue.toString();
         obj["needsreminder"] = br->needsReminder;
 
@@ -617,7 +609,7 @@ void LibraryDB::SaveData()
     {
         QJsonObject obj;
         obj["userno"] = br->userNo;
-        obj["isbn"] = QString::number(br->ISBN);
+        obj["isbn"] = br->ISBN;
         obj["duedate"] = br->dateDue.toString();
         obj["needsreminder"] = br->needsReminder;
 
@@ -643,7 +635,7 @@ void LibraryDB::SaveData()
         if(oldBooks.at(i)->updatedSinceLastSave)
         {
             QJsonObject obj;
-            obj["isbn"] = QString::number(oldBooks.at(i)->ISBN);
+            obj["isbn"] = oldBooks.at(i)->ISBN;
             obj["book-title"] = oldBooks.at(i)->title;
             obj["book-author"] = oldBooks.at(i)->author;
             obj["longterm"] = oldBooks.at(i)->longTerm;
@@ -727,7 +719,7 @@ void LibraryDB::ParseBookData()
         {
             obj["book-title"].toString(),
             obj["book-author"].toString(),
-            obj["isbn"].toString().toLongLong(),
+            obj["isbn"].toString(),
             QVector<int>{-1},
             obj["longterm"].toBool(),
             obj["publisher"].toString(),
@@ -860,7 +852,7 @@ void LibraryDB::ParseReserved()
         br = new BookReciept
         {
             obj["userno"].toInt(),
-            QString(obj["isbn"].toString()).toLongLong(),
+            obj["isbn"].toString(),
             QDate().fromString(obj["duedate"].toString()),
             obj["needsreminder"].toBool()
         };
@@ -895,7 +887,7 @@ void LibraryDB::ParseOld()
         {
             obj["book-title"].toString(),
             obj["book-author"].toString(),
-            obj["isbn"].toInt(),
+            obj["isbn"].toString(),
             QVector<int>{-1},
             obj["longterm"].toBool(),
             obj["publisher"].toString(),
@@ -939,7 +931,7 @@ void LibraryDB::ParseCheckedOut()
         br = new BookReciept
         {
             obj["userno"].toInt(),
-            QString(obj["isbn"].toString()).toLongLong(),
+            obj["isbn"].toString(),
             QDate().fromString(obj["duedate"].toString()),
             obj["needsreminder"].toBool()
         };
@@ -956,7 +948,7 @@ void LibraryDB::ParseDBJson()
     //Load the saved info for the database
     //-------------------
 
-    masterList.push_back(new Book{"Title", "Author", 0, QVector<int>{-1,-1,-1}, false, "Publisher", 0});
+    masterList.push_back(new Book{"Title", "Author", "0", QVector<int>{-1,-1,-1}, false, "Publisher", 0});
     ParseBookData();
     ParseUserData();
     memberNumber = registeredUsers.size();

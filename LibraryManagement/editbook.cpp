@@ -28,7 +28,7 @@ void editBook::on_buttonBox_accepted()
 {
     Book *b = new Book{ui->titleLE->text(),
                     ui->authorLE->text(),
-                    ui->isbnLE->text().toLongLong(),
+                    ui->isbnLE->text(),
                     QVector<int>{-1, -1, -1},
                     ui->longtermCB->isChecked(),
                     ui->publisherLE->text(),

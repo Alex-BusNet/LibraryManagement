@@ -37,8 +37,6 @@ private slots:
 
     void on_userInfoTable_itemActivated(QTableWidgetItem *item);
 
-    void on_tableWidget_itemSelected(QTableWidgetItem *item);
-
     void on_borrowBookButton_clicked();
 
     void on_returnBookButton_clicked();
@@ -56,6 +54,12 @@ private slots:
     void on_editBookButton_clicked();
 
     void on_removeBookButton_clicked();
+
+    void RemoveUser();
+
+    void RemoveBook();
+
+    void on_tableWidget_cellClicked(int row, int column);
 
 private:
     Ui::UserOptions *ui;
@@ -75,11 +79,6 @@ private:
     QTableWidgetItem *userName;
     QTableWidgetItem *userAccess;
 
-private slots:
-    void RemoveUser();
-    void RemoveBook();
-    void on_tableWidget_itemEntered(QTableWidgetItem *item);
-    void on_tableWidget_itemChanged(QTableWidgetItem *item);
 };
 
 #endif // USEROPTIONS_H

@@ -29,13 +29,13 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
     foreach(Book* b, LibraryDB::instance()->GetAllBooks())
     {
         if(i == 0) { i++ ; continue; }
+        else if(b->ISBN.toInt() == 0) { continue; }
         else if(i == 5662) { break; }
-        else if(b->ISBN == 0) { continue; }
         else { i++; }
 
         title = new QTableWidgetItem(b->title);
         author = new QTableWidgetItem(b->author);
-        ISBN = new QTableWidgetItem(QString::number(b->ISBN));
+        ISBN = new QTableWidgetItem(b->ISBN);
         copies = new QTableWidgetItem(QString::number(LibraryDB::instance()->GetCopiesOfBook(b->ISBN)));
         longTerm = new QTableWidgetItem((b->longTerm) ? "4 Weeks" : "1 Week");
         publisher = new QTableWidgetItem(b->publisher);
@@ -77,6 +77,9 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
         ui->editBookButton->setVisible(false);
         ui->frame->setVisible(false);
         ui->reminderCB->setVisible(false);
+        ui->addBookButton->setVisible(false);
+        ui->editBookButton->setVisible(false);
+        ui->removeBookButton->setVisible(false);
         ui->managerSpace->changeSize(10, 10, QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
     else if(userLevel == 1)
@@ -86,6 +89,9 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
         ui->editUserButton->setVisible(false);
         ui->userInfoTable->setVisible(false);
         ui->userTableLabel->setVisible(false);
+        ui->addBookButton->setVisible(false);
+        ui->editBookButton->setVisible(false);
+        ui->removeBookButton->setVisible(false);
     }
     else if(userLevel == 2)
     {
@@ -110,6 +116,7 @@ UserOptions::UserOptions(QWidget *parent, int userLevel) :
 
         ui->editUserButton->setEnabled(false);
     }
+
     QStringList searchParams = {"Title", "Author", "ISBN"};
     ui->searchType->addItems(searchParams);
     ui->searchType->setCurrentIndex(0);
@@ -161,13 +168,13 @@ void UserOptions::on_searchButton_clicked()
     switch(search)
     {
     case 0: // Title
-        results = LibraryDB::instance()->GetBooks(ui->searchBar->text());
+        results = LibraryDB::instance()->GetBooks(ui->searchBar->text(), LibraryDB::TITLE);
         break;
     case 1: // Author
-        results = LibraryDB::instance()->GetBooks("", ui->searchBar->text());
+        results = LibraryDB::instance()->GetBooks(ui->searchBar->text(), LibraryDB::AUTHOR);
         break;
     case 2: // ISBN
-        results.push_back(LibraryDB::instance()->GetBook(ui->searchBar->text().toLongLong()));
+        results = LibraryDB::instance()->GetBooks(ui->searchBar->text(), LibraryDB::ISBN);
         break;
     default: // Get all books
         results = LibraryDB::instance()->GetAllBooks();
@@ -182,11 +189,11 @@ void UserOptions::on_searchButton_clicked()
         if(b == LibraryDB::instance()->GetBookAt(0)) { continue; }
 
         if(row == 5662) { break; }
-        else if(b->ISBN == 0) { continue; }
+        else if(b->ISBN.toInt() == 0) { continue; }
 
         title = new QTableWidgetItem(b->title);
         author = new QTableWidgetItem(b->author);
-        ISBN = new QTableWidgetItem(QString::number(b->ISBN));
+        ISBN = new QTableWidgetItem(b->ISBN);
         copies = new QTableWidgetItem(QString::number(LibraryDB::instance()->GetCopiesOfBook(b->ISBN)));
         longTerm = new QTableWidgetItem((b->longTerm) ? "4 Weeks" : "1 Week");
         publisher = new QTableWidgetItem(b->publisher);
@@ -226,7 +233,7 @@ void UserOptions::on_reservedListButton_clicked()
     foreach(BookReciept *br, reservationList)
     {
         userNo = new QTableWidgetItem(QString::number(br->userNo));
-        isbn = new QTableWidgetItem(QString::number(br->ISBN));
+        isbn = new QTableWidgetItem(br->ISBN);
         duedate = new QTableWidgetItem(br->dateDue.toString());
         needsreminder = new QTableWidgetItem((br->needsReminder ? "True" : "False"));
 
@@ -270,7 +277,7 @@ void UserOptions::on_checkedOutListButton_clicked()
     foreach(BookReciept *br, checkoutList)
     {
         userNo = new QTableWidgetItem(QString::number(br->userNo));
-        isbn = new QTableWidgetItem(QString::number(br->ISBN));
+        isbn = new QTableWidgetItem(br->ISBN);
         duedate = new QTableWidgetItem(br->dateDue.toString());
         needsreminder = new QTableWidgetItem((br->needsReminder ? "True" : "False"));
 
@@ -335,27 +342,22 @@ void UserOptions::on_userInfoTable_itemActivated(QTableWidgetItem *item)
     ui->editUserButton->setEnabled(true);
 }
 
-void UserOptions::on_tableWidget_itemSelected(QTableWidgetItem *item)
-{
-    ui->isbnLineEdit->setText(ui->tableWidget->itemAt(3, ui->tableWidget->currentRow())->text());
-}
-
 void UserOptions::on_borrowBookButton_clicked()
 {
     LibraryDB::instance()->CheckOutBook(LibraryDB::instance()->GetUser(ui->userIdLineEdit->text().toInt()),
-                                        LibraryDB::instance()->GetBook(ui->isbnLineEdit->text().toLongLong()),
+                                        LibraryDB::instance()->GetBook(ui->isbnLineEdit->text()),
                                         false,false);
 }
 
 void UserOptions::on_returnBookButton_clicked()
 {
-    LibraryDB::instance()->ReturnBook(ui->isbnLineEdit->text().toLongLong());
+    LibraryDB::instance()->ReturnBook(ui->isbnLineEdit->text());
 }
 
 void UserOptions::on_reserveBookButton_clicked()
 {
     LibraryDB::instance()->CheckOutBook(LibraryDB::instance()->GetUser(LibraryDB::instance()->GetActiveUser()),
-                                        LibraryDB::instance()->GetBook(ui->tableWidget->currentItem()->text().toLongLong()),
+                                        LibraryDB::instance()->GetBook(ui->tableWidget->currentItem()->text()),
                                         false,true);
 }
 
@@ -426,6 +428,32 @@ void UserOptions::on_addBookButton_clicked()
     eb = new editBook();
     eb->exec();
 
+    int i, row = 0;
+    foreach(Book* b, LibraryDB::instance()->GetAllBooks())
+    {
+        if(i == 0) { i++ ; continue; }
+        else if(i == 5662) { break; }
+        else if(b->ISBN.toInt() == 0) { continue; }
+        else { i++; }
+
+        title = new QTableWidgetItem(b->title);
+        author = new QTableWidgetItem(b->author);
+        ISBN = new QTableWidgetItem(b->ISBN);
+        copies = new QTableWidgetItem(QString::number(LibraryDB::instance()->GetCopiesOfBook(b->ISBN)));
+        longTerm = new QTableWidgetItem((b->longTerm) ? "4 Weeks" : "1 Week");
+        publisher = new QTableWidgetItem(b->publisher);
+        publishYear = new QTableWidgetItem(QString::number(b->publishYear));
+
+        ui->tableWidget->setItem(row, 0, title);
+        ui->tableWidget->setItem(row, 1, author);
+        ui->tableWidget->setItem(row, 2, ISBN);
+        ui->tableWidget->setItem(row, 3, copies);
+        ui->tableWidget->setItem(row, 4, longTerm);
+        ui->tableWidget->setItem(row, 5, publisher);
+        ui->tableWidget->setItem(row, 6, publishYear);
+
+        row++;
+    }
 }
 
 void UserOptions::on_editBookButton_clicked()
@@ -440,9 +468,36 @@ void UserOptions::on_editBookButton_clicked()
         delete eb;
     }
 
-    Book *ref = LibraryDB::instance()->GetBook(ui->tableWidget->itemAt(2, ui->tableWidget->currentRow())->text().toLongLong());
-    eb = new editBook(0, ref->title, ref->author, QString::number(ref->ISBN), ref->copiesAvailable.size(), ref->publisher, ref->publishYear, false);
+    Book *ref = LibraryDB::instance()->GetBook(ui->tableWidget->itemAt(2, ui->tableWidget->currentRow())->text());
+    eb = new editBook(0, ref->title, ref->author, ref->ISBN, ref->copiesAvailable.size(), ref->publisher, ref->publishYear, false);
     eb->exec();
+
+    int i, row = 0;
+    foreach(Book* b, LibraryDB::instance()->GetAllBooks())
+    {
+        if(i == 0) { i++ ; continue; }
+        else if(i == 5662) { break; }
+        else if(b->ISBN.toInt() == 0) { continue; }
+        else { i++; }
+
+        title = new QTableWidgetItem(b->title);
+        author = new QTableWidgetItem(b->author);
+        ISBN = new QTableWidgetItem(b->ISBN);
+        copies = new QTableWidgetItem(QString::number(LibraryDB::instance()->GetCopiesOfBook(b->ISBN)));
+        longTerm = new QTableWidgetItem((b->longTerm) ? "4 Weeks" : "1 Week");
+        publisher = new QTableWidgetItem(b->publisher);
+        publishYear = new QTableWidgetItem(QString::number(b->publishYear));
+
+        ui->tableWidget->setItem(row, 0, title);
+        ui->tableWidget->setItem(row, 1, author);
+        ui->tableWidget->setItem(row, 2, ISBN);
+        ui->tableWidget->setItem(row, 3, copies);
+        ui->tableWidget->setItem(row, 4, longTerm);
+        ui->tableWidget->setItem(row, 5, publisher);
+        ui->tableWidget->setItem(row, 6, publishYear);
+
+        row++;
+    }
 }
 
 void UserOptions::on_removeBookButton_clicked()
@@ -450,20 +505,20 @@ void UserOptions::on_removeBookButton_clicked()
     QMessageBox *mbox = new QMessageBox();
     mbox->setText("Are You sure?");
     mbox->exec();
-    connect(mbox, SIGNAL(accepted()), this, SLOT(RemoveUser()));
+    connect(mbox, SIGNAL(accepted()), this, SLOT(RemoveBook()));
 }
 
 void UserOptions::RemoveUser()
 {
-    LibraryDB::instance()->RemoveUser(ui->userInfoTable->itemAt(0, ui->userInfoTable->currentRow())->text().toInt());
+    LibraryDB::instance()->RemoveUser(ui->userInfoTable->itemAt(ui->userInfoTable->currentRow(), 0)->text().toInt());
 }
 
 void UserOptions::RemoveBook()
 {
-    LibraryDB::instance()->RemoveBook(ui->tableWidget->itemAt(2, ui->tableWidget->currentRow())->text().toLongLong());
+    LibraryDB::instance()->RemoveBook(ui->tableWidget->itemAt(ui->tableWidget->currentRow(), 2)->text());
 }
 
-void UserOptions::on_tableWidget_itemChanged(QTableWidgetItem *item)
+void UserOptions::on_tableWidget_cellClicked(int row, int column)
 {
-     ui->isbnLineEdit->setText(ui->tableWidget->itemAt(3, ui->tableWidget->currentRow())->text());
+    ui->isbnLineEdit->setText(ui->tableWidget->item(row, 2)->text());
 }

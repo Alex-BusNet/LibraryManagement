@@ -14,6 +14,7 @@ class LibraryDB : public QObject
 {
     Q_OBJECT
 public:
+    enum SearchType {TITLE, AUTHOR, ISBN};
     //Use LibraryDB::instance() to access these functions.
     // DO NOT make a new LibraryDB object
     static LibraryDB *instance();
@@ -34,20 +35,20 @@ public:
     int Authenticate(UserBase *s);
 
     void AddBook(Book *b);
-    void RemoveBook(long long ISBN);
-    void EditBook(long long isbn, Book *editedBook);
+    void RemoveBook(QString ISBN);
+    void EditBook(QString isbn, Book *editedBook);
 
-    QVector<Book *> GetBooks(const QString title = " ", const QString author = " ");
+    QVector<Book *> GetBooks(const QString search, SearchType type);
     Book* GetBookAt(int index);
-    Book* GetBook(const long long ISBN);
+    Book* GetBook(const QString ISBN);
     Book* GetBook(const QString title, const QString author);
     
     QVector<Book*> GetAllBooks();
 
-    int GetCopiesOfBook(const long long ISBN);
+    int GetCopiesOfBook(const QString ISBN);
     int GetCopiesOfBook(const QString title, const QString author);
 
-    void ReturnBook(long long ISBN);
+    void ReturnBook(QString ISBN);
 
     void CheckOutBook(UserBase *u, Book *b, bool needsReminder, bool isReservation = false);
     QVector<BookReciept*> BooksDueBy(QDate date) const;
