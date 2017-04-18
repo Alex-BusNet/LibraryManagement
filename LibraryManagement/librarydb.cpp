@@ -24,11 +24,11 @@ LibraryDB *LibraryDB::instance()
  */
 bool LibraryDB::AddUser(UserBase *u, QString pass)
 {
-
     if(memberLogins.contains(u->GetUsername()))
     {
         return false;
     }
+
     memberNumber++;
     u->SetCardNumber(memberNumber);
 
@@ -40,8 +40,10 @@ bool LibraryDB::AddUser(UserBase *u, QString pass)
 
 void LibraryDB::RemoveUser(int userNumber)
 {
-    foreach(UserBase *ub, registeredUsers)
+    UserBase *ub;
+    for(int i = 0; i < registeredUsers.size(); i++)
     {
+        ub = registeredUsers.at(i);
         if(ub->GetCardNumber() == userNumber)
         {
             if(Staff::instanceof(ub))
@@ -49,7 +51,7 @@ void LibraryDB::RemoveUser(int userNumber)
                 RemoveStaff(static_cast<Staff*>(ub));
             }
 
-            registeredUsers.removeAll(ub);
+            registeredUsers.removeAt(i);
             break;
         }
     }
@@ -68,7 +70,9 @@ UserBase *LibraryDB::GetUser(QString username)
             return u;
     }
 
-    return NULL;
+    User *u = new User(" ", " ", " ", " ");
+    u->SetCardNumber(-1);
+    return u;
 }
 
 UserBase *LibraryDB::GetUser(int userNumber)
@@ -91,21 +95,29 @@ void LibraryDB::UpdateUser(int userNo, UserBase *ub, bool isStaff)
 {
     if(isStaff)
     {
-        foreach(Staff *s, staffMembers)
+        Staff *s;
+        for(int i = 0; i < staffMembers.size(); i++)
         {
+            s = staffMembers.at(i);
             if(s->GetCardNumber() == userNo)
             {
-                s = static_cast<Staff*>(ub);
-                break;
+                if(Manager::instanceof(ub))
+                {
+                    registeredUsers.replace(userNo - 1, static_cast<Manager*>(ub));
+                    staffMembers.replace(i, static_cast<Manager*>(ub));
+                }
+                else
+                {
+                    registeredUsers.replace(userNo - 1, static_cast<Staff*>(ub));
+                    staffMembers.replace(i, static_cast<Staff*>(ub));
+                }
+
+                return;
             }
         }
+    }
 
-        registeredUsers.replace(userNo, static_cast<Staff*>(ub));
-    }
-    else
-    {
-        registeredUsers.replace(userNo, static_cast<User*>(ub));
-    }
+    registeredUsers.replace(userNo - 1, static_cast<User*>(ub));
 
 }
 
@@ -127,7 +139,14 @@ bool LibraryDB::AddStaff(Staff* s)
  */
 void LibraryDB::RemoveStaff(Staff *s)
 {
-    staffMembers.removeAll(s);
+    for(int i = 0; i < staffMembers.size(); i++)
+    {
+        if(staffMembers.at(i)->GetCardNumber() == s->GetCardNumber())
+        {
+            staffMembers.removeAt(i);
+            break;
+        }
+    }
 }
 
 /*
@@ -193,14 +212,16 @@ void LibraryDB::AddBook(Book *b)
  */
 void LibraryDB::RemoveBook(QString ISBN)
 {
-    foreach(Book* b, masterList)
+    Book* b;
+    for(int i = 0; i < masterList.size(); i++)
     {
+        b = masterList.at(i);
         if(b->ISBN == ISBN)
         {
         //Keep a copy of any removed books in case
         // book was accidentally removed
-        oldBooks.push_back(b);
-        masterList.removeAll(b);
+        oldBooks.push_back(masterList.at(i));
+        masterList.removeAt(i);
         }
     }
 }
@@ -297,6 +318,11 @@ QVector<Book*> LibraryDB::GetAllBooks()
     return this->masterList;
 }
 
+QVector<Book *> LibraryDB::GetAllOldBooks()
+{
+    return oldBooks;
+}
+
 int LibraryDB::GetCopiesOfBook(const QString ISBN)
 {
     Book* b = GetBook(ISBN);
@@ -325,39 +351,42 @@ int LibraryDB::GetCopiesOfBook(const QString title, const QString author)
 
 void LibraryDB::ReturnBook(QString ISBN)
 {
-    foreach(BookReciept *br, checkedOutBooks)
+    BookReciept *br;
+    for(int i = 0; i < checkedOutBooks.size(); i++)
     {
+        br = checkedOutBooks.at(i);
         if(br->ISBN == ISBN)
         {
             int uNum = br->userNo;
             UserBase* u = GetUser(uNum);
             Book *b = GetBook(br->ISBN);
 
-            for(int i = 0; i < b->copiesAvailable.size(); i++)
+            for(int j = 0; j < b->copiesAvailable.size(); j++)
             {
-                if(b->copiesAvailable.at(i) == uNum)
+                if(b->copiesAvailable.at(j) == uNum)
                 {
-                    b->copiesAvailable[i] = -1;
+                    b->copiesAvailable[j] = -1;
 
-                    for(int j = i + 1; j < b->copiesAvailable.size(); j++)
+                    for(int k = j + 1; k < b->copiesAvailable.size(); k++)
                     {
-                        if((j + 1) < b->copiesAvailable.size())
+                        if((k + 1) < b->copiesAvailable.size())
                         {
                             //Shift all currently checked out copies up one index.
-                            b->copiesAvailable[j] = b->copiesAvailable[j + 1];
+                            b->copiesAvailable[k] = b->copiesAvailable[k + 1];
                         }
                         else
                         {
                             //The last copy in the vector becomes available.
-                            b->copiesAvailable[j] = -1;
+                            b->copiesAvailable[k] = -1;
                         }
                     }
+                    break;
                 }
             }
 
             u->ReturnBook();
             b->updatedSinceLastSave = true;
-            checkedOutBooks.removeAll(br);
+            checkedOutBooks.removeAt(i);
             break;
         }
     }
@@ -398,7 +427,9 @@ void LibraryDB::CheckOutBook(UserBase *u, Book *b, bool needsReminder, bool isRe
                     dueDate.addDays(7); // 1 week
 
                 checkedOutBooks.push_back(new BookReciept{u->GetCardNumber(), b->ISBN, dueDate, needsReminder});
-            }else{
+            }
+            else
+            {
                 QDate dueDate = QDate::currentDate();
                 reservedBooks.push_back(new BookReciept{u->GetCardNumber(), b->ISBN, dueDate, needsReminder});
             }
@@ -459,8 +490,18 @@ QVector<BookReciept*> LibraryDB::GetReservation(const int userNumber)
  */
 void LibraryDB::FulfillReservation(BookReciept *br)
 {
+    for(int i = 0; i < reservedBooks.size(); i++)
+    {
+        if((reservedBooks.at(i)->ISBN == br->ISBN) && (reservedBooks.at(i)->userNo == br->userNo))
+        {
+            reservedBooks.removeAt(i);
+            break;
+        }
+    }
+
+    br->dateDue.addDays(GetBook(br->ISBN)->longTerm ? 28 : 7);
     checkedOutBooks.push_back(br);
-    reservedBooks.removeAll(br);
+
     UserBase* u = GetUser(br->userNo);
     u->CheckOutBook();
 }
@@ -683,6 +724,7 @@ void LibraryDB::SortCheckOutBooks()
 
 void LibraryDB::ParseBookData()
 {
+     qDebug() << "Parsing Master List";
     QFile libFile("../LibraryManagement/Assets/BookList/master_ver2.json");
 
     if(!libFile.open(QIODevice::ReadOnly))
@@ -695,7 +737,6 @@ void LibraryDB::ParseBookData()
     QJsonDocument doc = QJsonDocument::fromJson(libArr);
     masterArr = doc.array();
     Book *b;
-
     for(int i = 1; i < masterArr.size(); i++)
     {
         QJsonObject obj = masterArr.at(i).toObject();
@@ -738,7 +779,6 @@ void LibraryDB::ParseBookData()
     }
 
     libFile.close();
-
 }
 
 void LibraryDB::ParseUserData()
@@ -809,7 +849,7 @@ void LibraryDB::ParseUserData()
 
     regUserFile.close();
 
-    qDebug() << "Parsing user logins";
+    qDebug() << "Parsing User Logins";
     QFile userLogins("../LibraryManagement/Assets/UserLists/logins.json");
     if(!userLogins.open(QIODevice::ReadOnly))
     {
@@ -966,7 +1006,6 @@ void LibraryDB::LoadSecondaryData()
 
 int LibraryDB::GetActiveUser()
 {
-    qDebug() << loggedInUser;
     return loggedInUser;
 }
 

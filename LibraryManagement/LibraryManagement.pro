@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     userbase.cpp \
     useroptions.cpp \
     editbook.cpp \
-    edituser.cpp
+    edituser.cpp \
+    recieptviewer.cpp
 
 HEADERS  += mainwindow.h \
     user.h \
@@ -32,9 +33,11 @@ HEADERS  += mainwindow.h \
     userbase.h \
     useroptions.h \
     editbook.h \
-    edituser.h
+    edituser.h \
+    recieptviewer.h
 
 FORMS    += mainwindow.ui \
     useroptions.ui \
     editbook.ui \
-    edituser.ui
+    edituser.ui \
+    recieptviewer.ui

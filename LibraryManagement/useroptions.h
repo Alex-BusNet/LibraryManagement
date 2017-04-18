@@ -24,8 +24,6 @@ private slots:
     void on_save_quit_button_clicked();
 
     void on_save_button_clicked();
-    
-    void on_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
 
     void on_searchButton_clicked();
 
@@ -60,6 +58,8 @@ private slots:
     void RemoveBook();
 
     void on_tableWidget_cellClicked(int row, int column);
+
+    void on_oldPB_clicked();
 
 private:
     Ui::UserOptions *ui;

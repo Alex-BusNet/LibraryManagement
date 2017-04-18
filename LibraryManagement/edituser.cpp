@@ -10,6 +10,7 @@ editUser::editUser(QWidget *parent, QString name, QString username, QString pass
     ui->setupUi(this);
     ui->nameLE->setText(name);
     ui->usernameLE->setText(username);
+    ui->passwordLE->setEchoMode(QLineEdit::Password);
     ui->passwordLE->setText(pass);
 
     if(newUser)
@@ -23,13 +24,17 @@ editUser::editUser(QWidget *parent, QString name, QString username, QString pass
     ui->addressLE->setText(address);
     ui->phoneLE->setText(phonenumber);
 
-    if(Staff::instanceof(LibraryDB::instance()->GetUser(username)))
+    if(Manager::instanceof(LibraryDB::instance()->GetUser(username)))
     {
-        ui->staffCB->setChecked(true);
+        ui->managerRB->setChecked(true);
+    }
+    else if(Staff::instanceof(LibraryDB::instance()->GetUser(username)))
+    {
+        ui->staffRB->setChecked(true);
     }
     else
     {
-        ui->staffCB->setChecked(false);
+        ui->userRB->setChecked(true);
     }
 
     this->newUser = newUser;
@@ -42,8 +47,28 @@ editUser::~editUser()
 
 void editUser::on_buttonBox_accepted()
 {
-    if(ui->staffCB->isChecked())
+    if(ui->managerRB->isChecked())
     {
+        qDebug() << "Manager";
+        Manager *m = new Manager(ui->nameLE->text(),
+                             ui->addressLE->text(),
+                             ui->phoneLE->text(),
+                             ui->usernameLE->text());
+
+        if(newUser)
+        {
+            LibraryDB::instance()->AddUser(m, ui->passwordLE->text());
+            LibraryDB::instance()->AddStaff(m);
+        }
+        else
+        {
+            m->SetCardNumber(ui->cardNumberLE->text().toInt());
+            LibraryDB::instance()->UpdateUser(m->GetCardNumber(), static_cast<Manager*>(m), true);
+        }
+    }
+    else if(ui->staffRB->isChecked())
+    {
+        qDebug() << "Staff";
         Staff *s = new Staff(ui->nameLE->text(),
                              ui->addressLE->text(),
                              ui->phoneLE->text(),
@@ -57,22 +82,37 @@ void editUser::on_buttonBox_accepted()
         else
         {
             s->SetCardNumber(ui->cardNumberLE->text().toInt());
-            LibraryDB::instance()->UpdateUser(s->GetCardNumber(), s, true);
+            LibraryDB::instance()->UpdateUser(s->GetCardNumber(), static_cast<Staff*>(s), true);
         }
     }
     else
     {
+        qDebug() << "User";
         User *u = new User(ui->nameLE->text(),
                            ui->addressLE->text(),
                            ui->phoneLE->text(),
                            ui->usernameLE->text());
 
         if(newUser)
+        {
             LibraryDB::instance()->AddUser(u, ui->passwordLE->text());
+        }
         else
         {
             u->SetCardNumber(ui->cardNumberLE->text().toInt());
             LibraryDB::instance()->UpdateUser(u->GetCardNumber(), u, false);
         }
+    }
+}
+
+void editUser::on_checkBox_toggled(bool checked)
+{
+    if(checked)
+    {
+        ui->passwordLE->setEchoMode(QLineEdit::Normal);
+    }
+    else
+    {
+        ui->passwordLE->setEchoMode(QLineEdit::Password);
     }
 }

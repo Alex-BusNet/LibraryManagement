@@ -44,6 +44,7 @@ public:
     Book* GetBook(const QString title, const QString author);
     
     QVector<Book*> GetAllBooks();
+    QVector<Book*> GetAllOldBooks();
 
     int GetCopiesOfBook(const QString ISBN);
     int GetCopiesOfBook(const QString title, const QString author);
